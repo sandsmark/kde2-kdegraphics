@@ -1,0 +1,2 @@
+#define KGHOSTVIEW_VERSION "0.12"
+

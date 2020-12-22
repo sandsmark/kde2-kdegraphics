@@ -1,0 +1,6 @@
+usr/share/apps/kpaint/*
+usr/share/doc/kde/HTML/en/kpaint/*
+usr/share/applnk/Graphics/kpaint.desktop
+usr/share/icons/*/*/apps/kpaint.*
+usr/bin/kpaint
+usr/share/man/man1/kpaint*

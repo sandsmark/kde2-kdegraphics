@@ -1,0 +1,14 @@
+<!DOCTYPE kpartgui>
+<kpartgui name="KGhostViewShell" version="4">
+<MenuBar>
+  <Menu name="file">
+    <DefineGroup name="file_save" append="save_merge" />
+    <DefineGroup name="file_print" append="print_merge" />
+  </Menu>
+  <Menu name="view">
+    <Action name="fit_to_page"/>
+  </Menu>
+  <Merge/>
+</MenuBar>
+</kpartgui>
+

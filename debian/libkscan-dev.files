@@ -1,0 +1,15 @@
+usr/lib/libkscan.so
+usr/include/kde/kscandevice.h
+usr/include/kde/kscanslider.h
+usr/include/kde/kgammatable.h
+usr/include/kde/kscanoption.h
+usr/include/kde/kscanoptset.h
+usr/include/kde/gammadialog.h
+usr/include/kde/dispgamma.h
+usr/include/kde/scansourcedialog.h
+usr/include/kde/scanparams.h
+usr/include/kde/massscandialog.h
+usr/include/kde/devselector.h
+usr/include/kde/img_canvas.h
+usr/include/kde/previewer.h
+usr/include/kde/imgscaledialog.h

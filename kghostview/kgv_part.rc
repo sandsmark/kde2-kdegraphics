@@ -1,0 +1,52 @@
+<!DOCTYPE kpartgui>
+<kpartgui name="KGhostView" version="7">
+<ActionProperties>
+  <Action name="goToPage" icon="goto"/>
+</ActionProperties>
+<MenuBar>
+  <Menu name="file"><text>&amp;File</text>
+    <Action name="file_save_as" group="file_save" />
+    <Action name="info" group="file_print" />
+  </Menu>
+  <Menu name="view"><text>&amp;View</text>
+    <Action name="orientation_menu"/>
+    <Action name="media_menu"/>
+    <Separator/>
+    <Action name="zoomIn"/>
+    <Action name="zoomOut"/>
+    <Action name="prevPage"/>
+    <Action name="nextPage"/>
+    <Action name="goToStart"/>
+    <Action name="goToEnd"/>
+    <Action name="readUp"/>
+    <Action name="readDown"/>
+    <Action name="goToPage"/>
+  </Menu>
+  <Menu name="pagemarks"><text>&amp;PageMarks</text>
+    <Action name="mark_current"/>
+    <Action name="mark_all"/>
+    <Action name="mark_even"/>
+    <Action name="mark_odd"/>
+    <Action name="toggle"/>
+    <Action name="remove"/>
+  </Menu>
+  <Menu name="settings">
+    <Action name="show_scrollbars"/>
+    <Action name="watch_file"/>
+    <Action name="show_page_list"/>
+    <Action name="fancy_page_labels"/>
+    <Separator/>
+    <Action name="configure"/>
+  </Menu>
+</MenuBar>
+<ToolBar name="mainToolBar"><text>Main Toolbar</text>
+  <Action name="zoomIn"/>
+  <Action name="zoomOut"/>
+  <Action name="prevPage"/>
+  <Action name="nextPage"/>
+  <Action name="readUp"/>
+  <Action name="readDown"/>
+  <Action name="goToPage"/>
+</ToolBar>
+</kpartgui>
+

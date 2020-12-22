@@ -1,0 +1,929 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.1-Based Variant V1.0//EN" "dtd/kdex.dtd" [
+  <!ENTITY kappname "&kview;">
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % English "INCLUDE" > <!-- change language only here -->
+  
+  
+]>
+
+<book lang="&language;">
+
+<bookinfo>
+<title>The &kview; Handbook</title>
+
+<authorgroup>
+<author>
+<firstname>Hauke</firstname>
+<surname>Hildebrandt</surname>
+<affiliation>
+<address><email>hauke.hildebrandt@iup.uni-heidelberg.de</email></address>
+
+</affiliation>
+</author>
+
+<othercredit role="developer">
+<firstname>Sirtaj</firstname>
+<othername>Singh</othername>
+<surname>Kang</surname>
+<contrib>Developer</contrib>
+</othercredit>
+
+<othercredit role="reviewer">
+<firstname>Lauri</firstname>
+<surname>Watts</surname>
+<affiliation><address><email>vampyr@atconnex.net</email></address></affiliation>
+<contrib>Reviewer</contrib>
+</othercredit>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+
+<copyright>
+<year>2001</year>
+<holder>Hauke Hildebrandt</holder>
+</copyright>
+<!-- Translators: put here the copyright notice of the translation -->
+<!-- Put here the FDL notice.  Read the explanation in fdl-notice.docbook 
+     and in the FDL itself on how to use it. -->
+<legalnotice>&FDLNotice;</legalnotice>
+
+<date>2001-02-01</date>
+<releaseinfo>1.00.00</releaseinfo>
+
+<abstract><para>&kview; is an image viewing program. It is small and fast and
+has some simple image processing commands. You can work with many different
+graphic file formats and convert your images to them. &kview; is not a
+fully-fledged image processor but it is sufficient for many of your everyday
+tasks (like making a nice new desktop background...).</para></abstract>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>kview</keyword>
+<keyword>kdegraphics</keyword>
+<keyword>image</keyword>
+<keyword>graphic</keyword>
+<keyword>viewer</keyword>
+</keywordset>
+
+</bookinfo>
+
+<chapter id="introduction">
+<title>Introduction</title>
+
+<para>&kview; is an image viewer for the &kde; desktop. You can view graphics of
+many different formats such as &PostScript;, <acronym>TIFF</acronym> &etc; By
+saving your files in a different format than the original you can easily convert
+images to other graphics formats. In addition, &kview; provides some nice little
+features for doing simple image processing, like stretching/shrinking, rotation
+and filtering. You can tile your images directly onto the desktop as a
+background picture, or arrange them in a little slideshow.</para>
+
+</chapter>
+
+<chapter id="sample-session">
+<title>A sample &kview; session</title>
+
+<para>This chapter is a quick tour through many of &kview;'s functions to get
+you quickly going to work with this program. You will find a complete
+description of all available commands in later chapters.</para>
+
+<sect1 id="lets-go">
+<title>Let's go!</title>
+
+<para>After you have started &kview; (using the panel menu, or typing
+<command>kview</command> at the command prompt) the &kview; main window shows up
+with an empty workspace:</para>
+
+<screenshot>
+<screeninfo>Starting &kview;</screeninfo>
+<mediaobject>
+<imageobject><imagedata fileref="snapshot1.png" format="PNG"/></imageobject>
+<textobject><phrase>A new &kview; application window.</phrase></textobject>
+<caption><para>A fresh new &kview; window</para></caption>
+</mediaobject>
+</screenshot>
+
+<para>All those creative people like you and me are discouraged by an empty
+sheet, so let's quickly open a new image. However, first we change the way that
+&kview; resizes its main window and the image after loading a new one: Select
+<guimenuitem>Configure KView</guimenuitem> from the <guimenu>Settings</guimenu>
+menu. A dialog leaps up:</para>
+
+<screenshot>
+<screeninfo>Changing options</screeninfo>
+<mediaobject>
+<imageobject><imagedata fileref="snapshot2.png" format="PNG"/></imageobject>
+<textobject><phrase>The settings dialog.</phrase></textobject>
+<caption><para>To resize or not to resize</para></caption>
+</mediaobject>
+</screenshot>
+
+<para>Select <quote>No Resize</quote> from the <quote>On Load</quote> group
+box. This means that neither the &kview; main window nor the image will be
+resized after loading.</para>
+
+<para>Now open <filename>Dasding.jpg</filename> which you find in the <filename
+class="directory">./share/wallpapers</filename> subdirectory of your main &kde;
+path (possibly <filename class="directory">/opt/kde</filename> or <filename
+class="directory">/opt/kde2</filename>). Ahh - that's looking better!</para>
+
+<screenshot>
+<screeninfo>Image loaded</screeninfo>
+<mediaobject>
+<imageobject><imagedata fileref="snapshot3.png" format="PNG"/></imageobject>
+<textobject><phrase>The wallpaper loaded into &kview;.</phrase></textobject>
+<caption><para>A beautiful image loaded...</para></caption>
+</mediaobject>
+</screenshot>
+
+</sect1>
+
+<sect1 id="selection">
+<title>The cutting edge</title>
+
+<para>Let's make a new background wallpaper out of the loaded image. We only
+need the &kde; logo (the gear-wheel on the right), not the whole picture, so
+select the logo by drawing a box around it. Press the
+<mousebutton>left</mousebutton> mouse button, hold it down and move the mouse. A
+dashed box appears, marking your selection. Repeat this until you are happy with
+your choice. Then go on and cut the selected region from the image by choosing
+<menuchoice><guimenu>Edit</guimenu><guimenuitem>Crop</guimenuitem></menuchoice>
+from the menu bar or it's equivalent shortcut, <keycombo
+action="simul"><keycap>Ctrl</keycap><keycap>C</keycap></keycombo>. Your
+workspace should now look like this:</para>
+
+<screenshot>
+<screeninfo>Image cropped</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="snapshot4.png" format="PNG"/></imageobject>
+<textobject><phrase>An important selection</phrase></textobject>
+<caption><para>Reduced to the essentials</para></caption>
+</mediaobject>
+</screenshot>
+
+<para>If you are not satisfied with the cutting you can always restore the
+image's original state with
+<menuchoice><guimenu>Edit</guimenu><guimenuitem>Reset</guimenuitem></menuchoice>,
+or the shortcut <keycombo
+action="simul"><keycap>Ctrl</keycap><keycap>R</keycap></keycombo>.</para>
+
+</sect1>
+
+<sect1 id="stirring-paste">
+<title>Stirring the paste</title>
+
+<para>We wanted to be creative, didn't we? &kview; provides some filter
+functions to manipulate images. They are (conveniently) placed in the
+<guimenu>Filter</guimenu> menu. Firstly, we will change the so-called
+<quote>gamma factor</quote>. This value affects mostly the mid-tones in the
+picture, leaving the brightest and darkest parts more or less untouched. Choose
+<menuchoice><guimenu>Filter</guimenu><guisubmenu>Intensity</guisubmenu><guimenuitem>Gamma
+correct</guimenuitem></menuchoice> from the menu bar. A dialog box
+appears. Change the value to 0.4 and hit the <guibutton>OK</guibutton>
+button. The picture is somehwat darker now:</para>
+
+<screenshot>
+<screeninfo>Gamma corrected</screeninfo>
+<mediaobject>
+<imageobject><imagedata fileref="snapshot5.png" format="PNG"/></imageobject>
+<textobject><phrase>Gamma correction</phrase></textobject>
+<caption><para>After the gamma correction</para></caption>
+</mediaobject>
+</screenshot>
+
+<para>For a little psychedelic touch we use the brightness function. Selecting
+Brightness again brings up a dialog. This time you can enter the new brightness
+expressed in percent relative to the original value (so 100 percent means
+<quote>initial value</quote>). Enter a value of <userinput>300.0</userinput>300>
+and watch what happens:</para>
+
+<screenshot>
+<screeninfo>Brighter</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="snapshot6.png" format="PNG"/></imageobject>
+<textobject><phrase>Brighter than ever</phrase></textobject>
+<caption><para>&kde; brighter than ever before</para></caption>
+</mediaobject>
+</screenshot>
+
+<para>Finally, we blur the image a little with
+<menuchoice><guimenu>Filter</guimenu>
+<guimenuitem>Smooth</guimenuitem></menuchoice>. Apply this filter two or three
+times (or more often if you can't stop!). The smoothing filter reduces the
+contrast between neighboring pixels:</para>
+
+<screenshot>
+<screeninfo>Smoother</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="snapshot7.png" format="PNG"/></imageobject>
+<textobject><phrase>Smoother than ever</phrase></textobject>
+<caption><para>&kde; - smooth as silk</para>
+</caption>
+</mediaobject>
+</screenshot>
+</sect1>
+
+<sect1 id="cluttering-desktop">
+<title>Cluttering up your desktop</title>
+
+<para>Before we use our masterpiece as a desktop background we better save
+it. At the moment, our picture is a <acronym>JPEG</acronym> image, but for some
+reason we want to store it in the <acronym>PNG</acronym> format. Easy - just
+call <menuchoice><guimenu>File</guimenu><guimenuitem>Save
+As</guimenuitem></menuchoice> and enter a filename with the extension <literal
+role="extension">.png</literal>:</para>
+
+<screenshot>
+<screeninfo>Saving</screeninfo>
+<mediaobject>
+<imageobject><imagedata fileref="snapshot8.png" format="PNG"/></imageobject>
+<textobject><phrase>Saving the picture</phrase></textobject>
+<caption><para>Saving and converting in one</para></caption>
+</mediaobject>
+</screenshot>
+
+<para>The great moment has finally come: Choose
+<menuchoice><guimenu>Desktop</guimenu><guimenuitem>Desktop
+Tile</guimenuitem></menuchoice> and admire your incredibly artistic
+background:</para>
+
+<screenshot>
+<screeninfo>Background</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="snapshot9.png" format="PNG"/></imageobject>
+<textobject><phrase>A new background</phrase></textobject>
+<caption><para>KDE - wherever you look</para></caption>
+</mediaobject>
+</screenshot>
+</sect1>
+</chapter>
+
+<chapter id="commands">
+<title>Command Reference</title>
+<para></para>
+
+<para>When you start &kview; you see the typical application layout: a workspace
+containing your documents (images in this case), a menubar that provides access
+to the various commands, a toolbar with shortcut buttons for some of them and a
+status bar at the bottom to display status messages. When you have the loaded an
+image into &kview;, there is also an additional context menu available which is
+diplayed by clicking your right mouse button over the image (you knew that
+already, didn't you?). Below, all menu entries are explained in the order= that
+they appear in the menubar.</para>
+
+<sect1 id="file-menu">
+<title>The <guimenu>File</guimenu> Menu</title>
+
+<variablelist>
+<varlistentry>
+<term><menuchoice>
+<shortcut>
+<keycombo action="simul"><keycap>Ctrl</keycap><keycap>O</keycap></keycombo>
+</shortcut>
+<guimenu><accel>F</accel>ile</guimenu>
+<guimenuitem><accel>O</accel>pen</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Opens a new image</action> in &kview;. The size of the
+&kview; main window and the image after loading are determined by your
+settings. If you open several images, only the last one is shown, but all of
+them can be accessed using the image list.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>F</accel>ile</guimenu>
+<guimenuitem>Open <accel>R</accel>ecent</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Displays a list of recently opened images.</action>
+Selecting one from this list reopens the image.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycombo action="simul">
+<keycap>Ctrl</keycap><keycap>S</keycap></keycombo></shortcut>
+<guimenu><accel>F</accel>ile</guimenu>
+<guimenuitem><accel>S</accel>ave</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Save the current image</action>.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>F</accel>ile</guimenu>
+<guimenuitem>Save <accel>A</accel>s</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Saves the image under a different name</action>. By
+choosing a new file format you can convert the image to a different graphics
+type.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycombo>
+<keycap>Ctrl</keycap><keycap>W</keycap></keycombo></shortcut>
+<guimenu><accel>F</accel>ile</guimenu>
+<guimenuitem><accel>C</accel>lose</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Closes the currently displayed
+image.</action></para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<shortcut><keycombo action="simul"><keycap>Ctrl</keycap>
+<keycap>P</keycap></keycombo></shortcut>
+<guimenu><accel>F</accel>ile</guimenu>
+<guimenuitem><accel>P</accel>rint</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Prints the image</action>.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycombo action="simul"><keycap>Ctrl</keycap>
+<keycap>N</keycap></keycombo></shortcut>
+<guimenu><accel>F</accel>ile</guimenu>
+<guimenuitem><accel>N</accel>ew Window</guimenuitem>
+</menuchoice></term><listitem><para><action>Creates a new (empty) application
+window.</action></para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<shortcut><keycombo action="simul"><keycap>Ctrl</keycap>
+<keycap>X</keycap></keycombo></shortcut>
+<guimenu><accel>F</accel>ile</guimenu><guimenuitem>Close
+<accel>W</accel>indow</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Closes the currently active window</action>. If you have
+only one window open this effectively finishes your &kview;
+session.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycombo action="simul">
+<keycap>Ctrl</keycap><keycap>Q</keycap></keycombo></shortcut>
+<guimenu><accel>F</accel>ile</guimenu>
+<guimenuitem><accel>Q</accel>uit</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Quits</action> &kview;. If you have several &kview;
+windows open, all of them are closed.</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect1>
+
+<sect1 id="edit-menu">
+<title>The <guimenu>Edit</guimenu> Menu</title>
+
+<variablelist>
+<varlistentry>
+<term><menuchoice><shortcut><keycombo action="simul"><keycap>Ctrl</keycap>
+<keycap>Shift</keycap><keycap>F</keycap></keycombo></shortcut>
+<guimenu><accel>E</accel>dit</guimenu>
+<guimenuitem><accel>F</accel>ullscreen Mode</guimenuitem></menuchoice>
+</term>
+<listitem>
+<para>This option maximizes the &kview; window and the currently shown image so
+you can have a closer look at it. Even the window decorations (titlebar etc) are
+temporarily removed. Selecting this option once again switches back to normal
+mode.</para> 
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycap>C</keycap></shortcut>
+<guimenu><accel>E</accel>dit</guimenu>
+<guimenuitem><accel>C</accel>rop</guimenuitem>
+</menuchoice></term>
+<listitem>
+<para>If you have selected any part of the image (by drawing a box around it
+using your mouse) you can cut off all the rest around it by using this
+option. Your image is effectively reduced to your selection.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycombo action="simul">
+<keycap>Ctrl</keycap><keycap>R</keycap></keycombo></shortcut>
+<guimenu><accel>E</accel>dit</guimenu>
+<guimenuitem><accel>R</accel>eset</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Resets</action> the image to its original state (right
+after opening it).</para></listitem>
+</varlistentry>
+</variablelist>
+
+</sect1>
+
+<sect1 id="view-menu">
+<title>The <guimenu>View</guimenu> Menu</title>
+
+<variablelist>
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>V</accel>iew</guimenu>
+<guimenuitem><accel>Z</accel>oom...</guimenuitem>
+</menuchoice></term>
+<listitem><para>Opens a dialog for <action>editing the zoom
+factor</action>. This value is given in percent and always refers to the
+<emphasis>initial</emphasis> size of the picture.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycombo action="simul">
+<keycap>Ctrl</keycap><keycap>+</keycap></keycombo></shortcut>
+<guimenu><accel>V</accel>iew</guimenu>
+<guimenuitem>Zoom <accel>I</accel>n</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Enlarges the image by ten percent</action>. Notice that
+this refers to the <emphasis>current</emphasis> size of the
+picture.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycombo action="simul">
+<keycap>Ctrl</keycap><keycap>-</keycap></keycombo></shortcut>
+<guimenu><accel>V</accel>iew</guimenu>
+<guimenuitem>Zoom <accel>O</accel>ut</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Reduces the image size by ten percent</action>. Again
+this refers to the <emphasis>current</emphasis> size of the
+image.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycap>]</keycap></shortcut>
+<guimenu><accel>V</accel>iew</guimenu>
+<guimenuitem><accel>D</accel>ouble size</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Doubles</action> the <emphasis>current</emphasis> image
+size.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycap>[</keycap></shortcut>
+<guimenu><accel>V</accel>iew</guimenu>
+<guimenuitem><accel>H</accel>alf size</guimenuitem></menuchoice></term>
+<listitem><para><action>Cuts the image size by half</action>. As above, this
+refers to the <emphasis>current</emphasis> image size.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycap>M</keycap></shortcut>
+<guimenu><accel>V</accel>iew</guimenu><guimenuitem><accel>M</accel>ax
+size</guimenuitem></menuchoice></term>
+<listitem><para><action>Maximizes the image size</action>. The image is scaled
+to the window size. This action does not preserve the aspect
+ratio.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycap>A</keycap></shortcut>
+<guimenu><accel>V</accel>iew</guimenu>
+<guimenuitem>Max/<accel>a</accel>spect</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Maximizes the image size</action>. Again, the image is
+size is maximized, but this time keeping the  aspect ratio
+constant.</para></listitem>
+</varlistentry>
+</variablelist>
+
+</sect1>
+
+<sect1 id="transform-menu">
+<title>The <guimenu>Transform</guimenu> Menu</title>
+
+<para>This menu offers commands for simple geometrical operations: rotation and
+reflection.</para>
+
+<variablelist>
+<varlistentry>
+<term><menuchoice><shortcut><keycap>;</keycap></shortcut>
+<guimenu><accel>T</accel>ransform</guimenu>
+<guimenuitem>Rotate <accel>c</accel>lockwise</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Rotates the image by 90=B0 in the clockwise
+direction</action>.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycap>,</keycap></shortcut>
+<guimenu><accel>T</accel>ransform</guimenu>
+<guimenuitem>Rotate <accel>a</accel>nti-clockwise</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Rotates the image by 90=B0 in the counter-clockwise
+direction</action>.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycap>V</keycap></shortcut>
+<guimenu><accel>T</accel>ransform</guimenu>
+<guimenuitem>Flip <accel>v</accel>ertical</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Flips the image along the
+vertical</action>. Mathematically, this does a reflection along the image's
+horizontal center line.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycap>H</keycap></shortcut>
+<guimenu><accel>T</accel>ransform</guimenu>
+<guimenuitem>Flip <accel>h</accel>orizontal</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Flips the image along the
+horizontal</action>. Mathematically, this does a reflection along the image's
+vertical center line.</para></listitem>
+</varlistentry>
+</variablelist>
+
+</sect1>
+
+<sect1 id="desktop-menu">
+<title>The <guimenu>Desktop</guimenu> Menu</title>
+
+<variablelist>
+<varlistentry>
+<term><menuchoice><guimenu><accel>D</accel>esktop</guimenu>
+<guimenuitem>Desktop <accel>T</accel>ile</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Tiles your image to the desktop
+background.</action>.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><guimenu><accel>D</accel>esktop</guimenu>
+<guimenuitem>Desktop <accel>M</accel>ax</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Wallpapers your image to the desktop.</action> This
+scales the image to the desktop size, possibly changing its aspect
+ratio.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>D</accel>esktop</guimenu>
+<guimenuitem>Desktop Max<accel>p</accel>ect</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Wallpapers your image to the desktop.</action> This
+scales the image to the desktop size, but keeps its aspect ratio
+constant.</para></listitem>
+</varlistentry>
+</variablelist>
+
+</sect1>
+
+<sect1 id="images-menu">
+<title>The <guimenu>Images</guimenu> Menu</title>
+
+<para>&kview; provides some functions for simple image processing:</para>
+
+<variablelist>
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>I</accel>mages</guimenu>
+<guimenuitem><accel>L</accel>ist...</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Displays a list of the currently loaded images.</action>
+You can flip through the images by either double-clicking on them or using the
+<guibutton>Previous</guibutton> and <guibutton>Next</guibutton>
+buttons. <guibutton>Shuffle</guibutton> rearranges the images in a random order,
+<guibutton>Sort</guibutton> arranges them alphabetically. Pressing
+<guibutton>Start Slideshow</guibutton> will start the slideshow with the current
+settings for interval and looping. In addition, you can save and load your image
+list using the corresponding buttons.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycombo action="simul">
+<keycap>Alt</keycap><keysym>Left Arrow</keysym></keycombo></shortcut>
+<guimenu><accel>I</accel>mages</guimenu>
+<guimenuitem><accel>B</accel>ack</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Switches to the previous image in the
+list.</action></para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycombo action="simul">
+<keycap>Alt</keycap><keysym>Right Arrow</keysym></keycombo></shortcut>
+<guimenu><accel>I</accel>mages</guimenu>
+<guimenuitem><accel>F</accel>orward</guimenuitem></menuchoice></term>
+<listitem><para><action>Switches to the next item in the
+list.</action></para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><shortcut><keycap>S</keycap></shortcut>
+<guimenu><accel>I</accel>mages</guimenu>
+<guimenuitem><accel>S</accel>lideshow On/Off</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Starts or stops the
+slideshow.</action></para></listitem>
+</varlistentry>
+</variablelist>
+
+</sect1>
+
+<sect1 id="filter-menu">
+<title>The <guimenu>Filter</guimenu> Menu</title>
+
+<para>&kview; provides some functions for simple image processing:</para>
+
+<variablelist>
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>F</accel>ilter</guimenu>
+<guisubmenu><accel>I</accel>ntensity</guisubmenu>
+<guimenuitem><accel>B</accel>rightness</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Changes the brightness of the image.</action> Enter the
+new brightness in percent (with respect to the <emphasis>initial</emphasis>
+value).</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>F</accel>ilter</guimenu>
+<guisubmenu><accel>I</accel>ntensity</guisubmenu>
+<guimenuitem>Gamma <accel>C</accel>orrect...</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Adjusts the gamma factor.</action></para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>F</accel>ilter</guimenu>
+<guimenuitem>Greyscale</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Converts a color image to a greyscale
+image.</action></para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>F</accel>ilter</guimenu>
+<guimenuitem><accel>S</accel>mooth</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Smoothes the image</action> by reducing the contrast
+between neighboring pixels.</para></listitem>
+</varlistentry>
+</variablelist>
+
+</sect1>
+
+<sect1 id="settings-menu">
+<title>The <guimenu>Settings</guimenu> Menu</title>
+<para>This menu provides options for configuring &kview;, changing its
+appearance, shortcuts and standard behavior.</para>
+
+<variablelist>
+<varlistentry>
+<term><menuchoice><shortcut><keycombo action="simul">
+<keycap>Ctrl</keycap><keycap>M</keycap></keycombo></shortcut>
+<guimenu><accel>S</accel>ettings</guimenu>
+<guimenuitem>Show <accel>M</accel>enubar</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Toggles the menubar on/off.</action></para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>S</accel>ettings</guimenu>
+<guimenuitem>Show <accel>T</accel>oolbar</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Toggles the toolbar on/off.</action></para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>S</accel>ettings</guimenu>
+<guimenuitem>Show St<accel>a</accel>tusbar</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Toggles the statusbar on/off.</action></para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>S</accel>ettings</guimenu>
+<guimenuitem><accel>S</accel>ave settings</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Saves the current settings.</action></para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>S</accel>ettings</guimenu>
+<guimenuitem>Configure <accel>K</accel>ey Bindings...</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Opens a dialog for changing the key bindings.</action>
+Using this option you can change the standard key shortcut for &kview;'s commands
+or create new ones.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>S</accel>ettings</guimenu>
+<guimenuitem>Configure Tool<accel>b</accel>ars...</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Opens a dialog for configuring the toolbar.</action> You
+can add and remove toolbuttons for &kview;'s commands with this
+option.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>S</accel>ettings</guimenu>
+<guimenuitem><accel>C</accel>onfigure KView...</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Opens a dialog for changing some options and your
+keybindings</action>:</para>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>On Load</guilabel></term>
+<listitem><para>This option determines if the window and/or the image will be
+resized after loading a new picture into &kview;. With <guilabel>Resize
+Window</guilabel> enabled, the &kview; window will be resized so that it snuggly
+fits around the loaded image. Notice that this can reduce the main window almost
+to a vertical arrangement of menu entries if you load a small button pixmap (you
+can resize the window afterwards in the usual way, of course). If your image is
+pretty large (in terms of pixels), sometimes the &kview; window is resized in
+such a way that the caption bar completely moves off your screen. Similarly,
+<guilabel>Resize Image</guilabel> resizes the image to fit into the &kview;
+workspace (keeping its aspect ratio intact). And with <guilabel>No
+Resize</guilabel> as your choice, both &kview; and your image keep their
+size.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Slideshow</guilabel></term>
+<listitem><para>Here you can change the parameters for the slideshow: the
+interval between the different slides, and if the show should continuously
+loop.</para></listitem>
+</varlistentry>
+</variablelist>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect1>
+
+<sect1 id="help-menu">
+<title>The <guimenu>Help</guimenu> Menu</title>
+
+<variablelist>
+<varlistentry>
+<term><menuchoice><shortcut><keycap>F1</keycap></shortcut>
+<guimenu><accel>H</accel>elp</guimenu>
+<guimenuitem><accel>C</accel>ontents</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Starts the KDE help system at the KView
+Handbook</action> - you have done this before, haven't you?</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>H</accel>elp</guimenu>
+<guimenuitem>What's <accel>T</accel>his?</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Gives a short description of the item you
+select.</action> The cursor changes to some sort of <quote>help
+pointer</quote>. Just click on the thing you are not too familiar with and a
+description of it is shown.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>H</accel>elp</guimenu>
+<guimenuitem><accel>R</accel>eport Bug</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Opens the KDE bug report dialog.</action> If you have
+found a bug (and maybe know its cause and have already fixed it?) then send a
+bug report so the authors can deal with it.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>H</accel>elp</guimenu>
+<guimenuitem><accel>A</accel>bout KView</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Displays the version and the authors of
+KView.</action></para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>H</accel>elp</guimenu>
+<guimenuitem>About <accel>K</accel>DE</guimenuitem>
+</menuchoice></term>
+<listitem><para>Displays the standard &kde; info window.</para></listitem>
+</varlistentry>
+</variablelist>
+
+</sect1>
+
+</chapter>
+
+<chapter id="command-line">
+<title>Command Line Options</title>
+
+<para>&kview; can be started directly from a terminal like &konsole; or
+<application>xterm</application>. Several command line options are
+available.</para>
+
+<variablelist>
+<varlistentry>
+<term><command>kview</command> <option>--help</option></term>
+<listitem><para>Lists the command line options (see below).</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><command>kview</command> <option>--help-qt</option></term>
+<listitem><para>Shows the options specific to &Qt; (the <acronym>GUI</acronym>
+library that &kde; is based on).</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><command>kview</command> <option>--help-kde</option></term>
+<listitem><para>Shows the &kde;-specific options.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><command>kview</command> <option>--help-all</option></term>
+<listitem><para>Displays all command line options.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><command>kview</command> <option>--author</option></term>
+<listitem><para>You want to send your warm wishes and euphoric cheers to
+someone? Here they are!</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><command>kview</command> <option>-v</option>,
+<option>--version</option></term>
+<listitem><para>Displays the version number of &kview; (and that of
+&Qt;/&kde;).</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><command>kview</command> <option>--license</option></term>
+<listitem><para>Shows under which licenses &kview; is being
+published.</para></listitem>
+</varlistentry>
+</variablelist>
+</chapter>
+
+<chapter id="credits">
+<title>Credits and License</title>
+
+<para>&kview;</para>
+
+<para>Program copyright 1997-2001 Sirtaj S. Kang
+<email>taj@kde.org</email></para>
+
+<para>KParts integration by Simon Hausmann
+<email>shaus@neuro2.med.uni-magdeburg.de</email></para>
+<para>Maintainer: Matthias Kretz <email>kretz@kde.org</email></para>
+<para>Documentation copyright 2001 Hauke Hildebrandt
+<email>hauke.hildebrandt@iup.uni-heidelberg.de</email>
+</para>
+
+&underFDL;               <!-- FDL: do not remove -->
+&underGPL;        	 <!-- GPL License -->
+
+</chapter>
+
+<appendix id="installation">
+<title>Installation</title>
+
+<sect1 id="getting-kview">
+<title>How to obtain &kview;</title>
+
+<para>&kview; is part of the &kde; project and  can be found in the kdegraphics
+package. For more information on obtaining and installing &kde; please see
+<ulink url="http://www.kde.org">http://www.kde.org</ulink>. </para>
+</sect1>
+
+<sect1 id="requirements">
+<title>Requirements</title>
+
+<para>Since &kview; is part of the &kde; desktop you need a working &kde;
+installation to use it. However, some additional libraries are needed by &kview;
+to use the various graphics file formats. For example, to handle the
+<acronym>PNG</acronym> format &kview; needs the corresponding library
+libpng. &kview; uses the libraries that are registered by
+kdelibs/kimgio. Currently, libtiff, libpng and libjpeg are supported.</para>
+
+</sect1>
+
+</appendix>
+
+&documentation.index;
+</book>
+<!--
+Local Variables:
+mode: sgml
+sgml-minimize-attributes: nil
+sgml-general-insert-case: lower
+End:
+-->
+

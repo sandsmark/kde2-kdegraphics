@@ -1,0 +1,25 @@
+/*
+ * jpeg.h needs HAVE_BOOLEAN, when the system uses boolean in system
+ * headers and I'm too lazy to write a configure test as long as only
+ * unixware is related
+ */
+#ifdef _UNIXWARE
+#define HAVE_BOOLEAN
+#endif
+
+#ifndef HAVE_SETENV
+#define HAVE_SETENV
+#ifdef __cplusplus
+extern "C" 
+#endif
+int setenv(const char *name, const char *value, int overwrite);
+#endif
+
+#ifndef HAVE_UNSETENV
+#define HAVE_UNSETENV
+#ifdef __cplusplus
+extern "C" 
+#endif
+int unsetenv(const char *name);
+#endif
+

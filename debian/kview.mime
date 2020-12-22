@@ -1,0 +1,11 @@
+image/gif; kview   %s;test=test "$DISPLAY" != ""; priority=5
+image/x-xpm; kview   %s;test=test "$DISPLAY" != ""; priority=5
+image/x-xbm; kview   %s;test=test "$DISPLAY" != ""; priority=5
+image/jpeg; kview   %s;test=test "$DISPLAY" != ""; priority=5
+image/bmp; kview   %s;test=test "$DISPLAY" != ""; priority=5
+image/x-ms-bmp; kview  %s;test=test "$DISPLAY" != ""; priority=5
+image/png; kview   %s;test=test "$DISPLAY" != ""; priority=5
+video/x-mng; kview %s;test=test "$DISPLAY" != ""; priority=5
+image/x-jng; kview %s;test=test "$DISPLAY" != ""; priority=5
+application/x-dvi; kviewshell dvi %s -caption "DVI Viewer"   ;test=test "$DISPLAY" != ""; priority=5
+image/fax-g3; kviewshell fax %s -caption "Fax Viewer"   ;test=test "$DISPLAY" != ""; priority=5

@@ -1,0 +1,2841 @@
+--- kdegraphics-2.2.2.orig/kamera/kcontrol/CVS/Entries
++++ kdegraphics-2.2.2/kamera/kcontrol/CVS/Entries
+@@ -1,8 +1,10 @@
+-/.cvsignore/1.1/Sat Jan 27 20:47:02 2001//TKDE_2_2_BRANCH
+-/Makefile.am/1.1.4.2/Tue Oct  2 04:14:03 2001//TKDE_2_2_BRANCH
+-/kamera.cpp/1.5.2.3/Tue Oct  2 04:14:03 2001//TKDE_2_2_BRANCH
+-/kamera.desktop/1.54.2.3/Tue Oct  2 04:14:03 2001//TKDE_2_2_BRANCH
+-/kamera.h/1.2.2.2/Tue Oct  2 04:14:03 2001//TKDE_2_2_BRANCH
+-/kameraconfigdialog.cpp/1.3.2.1/Tue Oct  2 04:14:04 2001//TKDE_2_2_BRANCH
+-/kameraconfigdialog.h/1.1.4.1/Tue Oct  2 04:14:04 2001//TKDE_2_2_BRANCH
++/.cvsignore/1.1/Sat Jan 27 20:47:02 2001//
++/Makefile.am/1.6/Wed Feb 20 08:40:28 2002//
++/kamera.cpp/1.14/Wed Feb 27 16:32:21 2002//
++/kamera.desktop/1.107/Sat Mar  9 09:37:21 2002//
++/kamera.h/1.9/Wed Feb 27 16:32:21 2002//
++/kameraconfigdialog.cpp/1.6/Fri Nov 30 08:40:21 2001//
++/kameraconfigdialog.h/1.2/Fri Aug 24 12:52:46 2001//
++/kameradevice.cpp/1.12/Wed Feb 27 15:13:35 2002//
++/kameradevice.h/1.8/Wed Feb 27 15:13:35 2002//
+ D
+--- kdegraphics-2.2.2.orig/kamera/kcontrol/Makefile.am
++++ kdegraphics-2.2.2/kamera/kcontrol/Makefile.am
+@@ -1,14 +1,14 @@
+-lib_LTLIBRARIES = libkcm_kamera.la
++kde_module_LTLIBRARIES = libkcm_kamera.la
+ 
+-libkcm_kamera_la_SOURCES = kamera.cpp kameraconfigdialog.cpp
++libkcm_kamera_la_SOURCES = kamera.cpp kameradevice.cpp kameraconfigdialog.cpp
+ 
+ libkcm_kamera_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
+-libkcm_kamera_la_LIBADD = -lkdeui -lkfile $(GPHOTO2_LIBS) $(GPIO_LIBS)
+-INCLUDES= $(all_includes) $(GPHOTO2_INCS) $(GPIO_INCS)
++libkcm_kamera_la_LIBADD = $(LIB_KDEUI) $(LIB_KIO) $(GPHOTO2_LIBS)
++INCLUDES= $(all_includes) $(GPHOTO2_INCS)
+ 
+-libkcm_kamera_la_METASOURCES = kamera.moc kameraconfigdialog.moc
++libkcm_kamera_la_METASOURCES = kamera.moc kameradevice.moc kameraconfigdialog.moc
+ 
+-noinst_HEADERS = kamera.h kameraconfigdialog.h
++noinst_HEADERS = kamera.h kameradevice.h kameraconfigdialog.h
+ 
+ KDE_ICON = Kamera
+ 
+--- kdegraphics-2.2.2.orig/kamera/kcontrol/kamera.cpp
++++ kdegraphics-2.2.2/kamera/kcontrol/kamera.cpp
+@@ -11,39 +11,39 @@
+ #include <qgrid.h>
+ #include <qwidgetstack.h>
+ #include <qcheckbox.h>
+-
+-#include <kconfig.h>
+-#include <klistview.h>
++#include <qdir.h>
++#include <qwhatsthis.h>
++#include <qregexp.h>
++#include <qpopupmenu.h>
++
++#include <ksimpleconfig.h>
++#include <kaction.h>
++#include <kiconloader.h>
++#include <kmessagebox.h>
++#include <kiconview.h>
+ #include <kdialog.h>
+ #include <klocale.h>
+ #include <kglobal.h>
+-#include <kmessagebox.h>
++#include <ktoolbar.h>
++
++#include <kprotocolinfo.h>
++#include <kdebug.h>
+ 
+ #include "kameraconfigdialog.h"
++#include "kameradevice.h"
+ #include "kamera.h"
+ #include "kamera.moc"
+ 
+ // XXX HACK HACK HACK
+ // XXX All tocstr(string) references can be safely replaced with
+-// XXX string.local8Bit() as soon as the gphoto2 API uses 'const char *'
++// XXX string.latin1() as soon as the gphoto2 API uses 'const char *'
+ // XXX instead of 'char *' in calls that don't modify the string
+-#define tocstr(x) ((char *)((x).local8Bit().operator const char *()))
+-
+-// Undefined constant from struct CameraAbilities
+-// definition in gphoto2-datatypes.h
+-static const int GPHOTO2_CAMERA_NAME_MAX = 128;
+-
+-static const int INDEX_NONE= 0;
+-static const int INDEX_SERIAL = 1;
+-static const int INDEX_PARALLEL = 2;
+-static const int INDEX_USB= 3;
+-static const int INDEX_IEEE1394 = 4;
+-static const int INDEX_NETWORK = 5;
++#define tocstr(x) ((char *)((x).latin1()))
+ 
+ extern "C"
+ {
+ 	KCModule *create_kamera(QWidget *parent, const char *name)
+-	{
++	{
+ 		KGlobal::locale()->insertCatalogue("kcmkamera");
+ 		return new KKameraConfig(parent, name);
+ 	}
+@@ -52,43 +52,27 @@
+ KKameraConfig *KKameraConfig::m_instance = NULL;
+ 
+ KKameraConfig::KKameraConfig(QWidget *parent, const char *name)
+-:KCModule(parent, name),
+-m_gpInitialised(false)
++:KCModule(parent, name)
+ {
+-	if(gp_init(GP_DEBUG_HIGH) == GP_ERROR) {
+-		displayGPFailureDialogue();
+-	} else if(gp_frontend_register(NULL,
+-				       NULL,
+-				       NULL,
+-				       NULL,
+-				       frontend_prompt) == GP_ERROR) {
+-		gp_exit();
+-		displayGPFailureDialogue();
+- 	} else {
+-		// store instance for frontend_prompt
+-		m_instance = this;
+-
+-		// remember to gp_exit() in destructor
+-		m_gpInitialised = true;
++	m_devicePopup = new QPopupMenu(this);
++	m_actions = new KActionCollection(this);
++	m_config = new KSimpleConfig(KProtocolInfo::config("camera"));
+ 
+-		// build and display normal dialogue
+-		displayGPSuccessDialogue();
++	// store instance for frontend_prompt
++	m_instance = this;
+ 
+-		// XXX unchecked return
+-		populateCameraListView();
++	// build and display normal dialogue
++	displayGPSuccessDialogue();
+ 
+-		// load existing configuration
+-		load();
+-	}
++	// autodetect new cameras
++	autoDetect();
++
++	// load existing configuration
++	load();
+ }
+ 
+ KKameraConfig::~KKameraConfig()
+ {
+-	// shutdown libgphoto2 if necessary
+-
+-	if(m_gpInitialised == true) {
+-		gp_exit();
+-	}
+ }
+ 
+ void KKameraConfig::defaults()
+@@ -97,402 +81,236 @@
+ 
+ void KKameraConfig::displayGPFailureDialogue(void)
+ {
+-	new QLabel(i18n("Unable to initialize the gPhoto2 libraries..."), this);
++	new QLabel(i18n("Unable to initialize the gPhoto2 libraries."), this);
+ }
+ 
+ void KKameraConfig::displayGPSuccessDialogue(void)
+ {
+-	QHBoxLayout *topLayout = new QHBoxLayout(this,
+-						KDialog::marginHint(),
+-						KDialog::spacingHint());
+-
++	// create a layout with two vertical boxes
++	QVBoxLayout *topLayout = new QVBoxLayout(this, KDialog::marginHint(), KDialog::spacingHint());
+ 	topLayout->setAutoAdd(true);
+-
+-	m_camSel = new KListView(this);
+-	m_camSel->addColumn(i18n("Supported Cameras"));
+-	m_camSel->setColumnWidthMode(0, QListView::Maximum);
+-
+-	// Make sure listview only as wide as it needs to be
+-	QSizePolicy camSelSizePolicy(QSizePolicy::Maximum,
+-				     QSizePolicy::Preferred);
+-	m_camSel->setSizePolicy(camSelSizePolicy);
+-
+-	connect(m_camSel, SIGNAL(selectionChanged(QListViewItem *)),
+-		SLOT(setCameraType(QListViewItem *)));
+-
+-	QVBox *rightLayout = new QVBox(this);
+-	rightLayout->setSpacing(10);
+-						
+-	m_portSelectGroup = new QVButtonGroup(i18n("Port"), rightLayout);
+-	QVGroupBox *portSettingsGroup = new QVGroupBox(i18n("Port Settings"),
+-							rightLayout);
+-	QVGroupBox *miscSettingsGroup = new QVGroupBox(i18n("Miscellaneous"),
+-							rightLayout);
+-
+-	QGrid *grid = new QGrid(2, rightLayout);
+-	grid->setSpacing(5);
+-	QPushButton *testCamera = new QPushButton(i18n("Test"), grid);
+-	m_configureCamera = new QPushButton(i18n("Configure"), grid);
+-
+-	connect(testCamera, SIGNAL(clicked()),
+-		this, SLOT(testCamera()));
+-	connect(m_configureCamera, SIGNAL(clicked()),
+-		this, SLOT(configureCamera()));
+-
+-	m_cacheHackCB = new QCheckBox(i18n("Use camera previews for"
+-					" Konqueror thumbnails"),
+-					miscSettingsGroup);
+-
+-	// Create port type selection radiobuttons.
+-	m_serialRB = new QRadioButton(i18n("serial"), m_portSelectGroup);
+-	m_portSelectGroup->insert(m_serialRB, INDEX_SERIAL);
+-	m_parallelRB = new QRadioButton(i18n("parallel"), m_portSelectGroup);
+-	m_portSelectGroup->insert(m_parallelRB, INDEX_PARALLEL);
+-	m_USBRB = new QRadioButton(i18n("USB"), m_portSelectGroup);
+-	m_portSelectGroup->insert(m_USBRB, INDEX_USB);
+-	m_IEEE1394RB = new QRadioButton(i18n("IEEE1394"), m_portSelectGroup);
+-	m_portSelectGroup->insert(m_IEEE1394RB, INDEX_IEEE1394);
+-	m_networkRB = new QRadioButton(i18n("network"), m_portSelectGroup);
+-	m_portSelectGroup->insert(m_networkRB, INDEX_NETWORK);
+-
+-	// Create port settings widget stack
+-	m_settingsStack = new QWidgetStack(portSettingsGroup);
+-
+-	connect(m_portSelectGroup, SIGNAL(clicked(int)),
+-		m_settingsStack, SLOT(raiseWidget(int)));
+-
+-	// none tab
+-	m_settingsStack->addWidget(new
+-		QLabel(i18n("No port type selected."),
+-		m_settingsStack), INDEX_NONE);
+-
+-	// serial tab
+-	grid = new QGrid(2, m_settingsStack);
+-	grid->setSpacing(5);
+-	new QLabel(i18n("Port"), grid);
+-	m_serialPortLineEdit = new QLineEdit(grid);
+-	new QLabel(i18n("Speed"), grid);
+-	m_serialSpeedCombo = new QComboBox(FALSE, grid);
+-	m_settingsStack->addWidget(grid, INDEX_SERIAL);
+-
+-	// parallel tab
+-	grid = new QGrid(2, m_settingsStack);
+-	grid->setSpacing(5);
+-	new QLabel(i18n("Port"), grid);
+-	m_parallelPortLineEdit = new QLineEdit(grid);
+-	m_settingsStack->addWidget(grid, INDEX_PARALLEL);
+-
+-	// USB tab
+-	m_settingsStack->addWidget(new
+-		QLabel(i18n("No user defineable settings for USB"),
+-		m_settingsStack), INDEX_USB);
+ 	
+-	// IEEE1394 tab
+-	m_settingsStack->addWidget(new
+-		QLabel(i18n("No user defineable settings for IEEE1394"),
+-		m_settingsStack), INDEX_IEEE1394);
+-
+-	// network tab
+-	grid = new QGrid(2, m_settingsStack);
+-	grid->setSpacing(5);
+-	new QLabel(i18n("Host"), grid);
+-	m_networkHostLineEdit = new QLineEdit(grid);
+-	new QLabel(i18n("port"), grid);
+-	m_networkPortLineEdit = new QLineEdit(grid);
+-	m_settingsStack->addWidget(grid, INDEX_NETWORK);
+-}
+-
+-void KKameraConfig::displayCameraAbilities(const CameraAbilities &abilities)
+-{
+-	// turn off any selected port
+-	QButton *selected = m_portSelectGroup->selected();
+-	if(selected != NULL)
+-		selected->toggle();
++	m_toolbar = new KToolBar(this, "ToolBar");
+ 	
+-	// enable radiobuttons for supported port types
+-	m_serialRB->setEnabled(SERIAL_SUPPORTED(abilities.port));
+-	m_parallelRB->setEnabled(PARALLEL_SUPPORTED(abilities.port));
+-	m_USBRB->setEnabled(USB_SUPPORTED(abilities.port));
+-	m_IEEE1394RB->setEnabled(IEEE1394_SUPPORTED(abilities.port));
+-	m_networkRB->setEnabled(NETWORK_SUPPORTED(abilities.port));
+-
+-	// enable camera configuration button if supported
+-	m_configureCamera->setEnabled(abilities.operations & GP_FILE_OPERATION_CONFIG);
+-
+-	// populate serial speed listbox from abilities
+-	if(SERIAL_SUPPORTED(abilities.port)) {
+-		m_serialSpeedCombo->clear();
+-
+-		for(int i = 0; abilities.speed[i]; ++i)
+-			m_serialSpeedCombo->insertItem(QString::number(abilities.speed[i]));
+-
+-		// default to max speed
+-		m_serialSpeedCombo->setCurrentItem(m_serialSpeedCombo->count() - 1);
+-	}
+-}
+-
+-bool KKameraConfig::populateCameraListView(void)
+-{
+-	int numCams = gp_camera_count();
+-
+-	if(numCams < 0) {
+-		// XXX libgphoto2 failed to get the camera list
+-		return false;
+-	} else {
+-		for(int x = 0; x < numCams; ++x) {
+-			char camName[GPHOTO2_CAMERA_NAME_MAX];
+-
+-			if(gp_camera_name(x, camName) == GP_OK) {
+-				new QListViewItem(m_camSel, camName);
+-			}
++	// create list of devices
++	m_deviceSel = new KIconView(this);
++	connect(m_deviceSel, SIGNAL(rightButtonClicked(QIconViewItem *, const QPoint &)), SLOT(slot_deviceMenu(QIconViewItem *, const QPoint &)));
++	connect(m_deviceSel, SIGNAL(selectionChanged(QIconViewItem *)), SLOT(slot_deviceSelected(QIconViewItem *)));
++	m_deviceSel->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
++	
++	// create actions
++	KAction *act;
++	
++	act = new KAction(i18n("Add"), "camera", 0, this, SLOT(slot_addCamera()), m_actions, "camera_add");
++	act->setWhatsThis(i18n("Click this button to add a new camera."));
++	act->plug(m_toolbar);
++	m_toolbar->insertLineSeparator();
++	act = new KAction(i18n("Test"), "camera_test", 0, this, SLOT(slot_testCamera()), m_actions, "camera_test");
++	act->setWhatsThis(i18n("Click this button to remove the selected camera from the list."));
++	act->plug(m_toolbar);
++	act = new KAction(i18n("Remove"), "edittrash", 0, this, SLOT(slot_removeCamera()), m_actions, "camera_remove");
++	act->setWhatsThis(i18n("Click this button to remove the selected camera from the list."));
++	act->plug(m_toolbar);
++	act = new KAction(i18n("Configure"), "configure", 0, this, SLOT(slot_configureCamera()), m_actions, "camera_configure");
++	act->setWhatsThis(i18n("Click this button to change the configuration of the selected camera.<br><br>The availability of this feature and the contents of the Configuration dialog depend on the camera model."));
++	act->plug(m_toolbar);
++
++	act = new KAction(i18n("Information"), "hwinfo", 0, this, SLOT(slot_cameraSummary()), m_actions, "camera_summary");
++	act->setWhatsThis(i18n("Click this button to view a summary of the current status of the selected camera.<br><br>The availability of this feature and the contents of the Configuration dialog depend on the camera model."));
++	act->plug(m_toolbar);
++}
++
++void KKameraConfig::populateDeviceListView(void)
++{
++	m_deviceSel->clear();
++	CameraDevicesMap::Iterator it;
++	for (it = m_devices.begin(); it != m_devices.end(); it++) {
++		if (it.data()) {
++			new QIconViewItem(m_deviceSel, it.key(), KGlobal::iconLoader()->loadIcon("camera", KIcon::Desktop));
+ 		}
+-
+-		return true;
+ 	}
++	slot_deviceSelected(m_deviceSel->currentItem());
+ }
+ 
+ void KKameraConfig::save(void)
+ {
+-	// open konfiguration object
+-	KConfig *config = new KConfig("kioslaverc");
+-	config->setGroup("Kamera Settings");
++	CameraDevicesMap::Iterator it;
+ 
+-	QListViewItem *driver = m_camSel->selectedItem();
+-
+-	if(driver == NULL) {
+-		delete config;
+-		return;
++	for (it = m_devices.begin(); it != m_devices.end(); it++)
++	{
++		it.data()->save(m_config);
+ 	}
++	m_config->sync();
++}
+ 
+-	// Store driver name
+-	config->writeEntry("Driver", driver->text(0));
+-
+-	QButton *selected = m_portSelectGroup->selected();
++void KKameraConfig::autoDetect(void)
++{
++	GPContext *glob_context = NULL;
++	QStringList groupList = m_config->groupList();
+ 
+-	if(selected == NULL) {
+-		delete config;
+-		return;
+-	}
++        int i, count;
++        CameraList list;
++        CameraAbilitiesList *al;
++        GPPortInfoList *il;
++        const char *model, *value;
+ 
+-	// A port type is selected, store related settings
+-	QString type = selected->text();
++        gp_abilities_list_new (&al);
++        gp_abilities_list_load (al, glob_context);
++        gp_port_info_list_new (&il);
++        gp_port_info_list_load (il);
++        gp_abilities_list_detect (al, il, &list, glob_context);
++        gp_abilities_list_free (al);
++        gp_port_info_list_free (il);
+ 
+-	if(type == i18n("serial")) {
+-		config->writeEntry("Port", "serial");
+-		config->writeEntry("Path", m_serialPortLineEdit->text());
+-		config->writeEntry("Speed", m_serialSpeedCombo->currentText());
+-	} else if(type == i18n("parallel")) {
+-		config->writeEntry("Port", "parallel");
+-		config->writeEntry("Path", m_parallelPortLineEdit->text());
+-	} else if(type == i18n("USB")) {
+-		config->writeEntry("Port", "usb");
+-	} else if(type == i18n("IEEE1394")) {
+-		config->writeEntry("Port", "ieee1394");
+-	} else if(type == i18n("network")) {
+-		config->writeEntry("Port", "network");
+-		config->writeEntry("NetHost", m_networkHostLineEdit->text());
+-		config->writeEntry("NetPort", m_networkPortLineEdit->text());
++        count = gp_list_count (&list);
++	
++	for (i = 0 ; i<count ; i++) {
++		gp_list_get_name  (&list, i, &model);
++		gp_list_get_value (&list, i, &value);
++
++		if (groupList.contains(model))
++			continue;
++		kdDebug() << "Adding " << model << " at " << value << endl;
++		m_config->setGroup(model);
++		m_config->writeEntry("Model",model);
++		m_config->writeEntry("Path",value);
+ 	}
+-
+-	config->writeEntry("PreviewThumbs",
+-			   m_cacheHackCB->isChecked() ? "true" : "false");
+-
+-	delete config;
+ }
+ 
+ void KKameraConfig::load(void)
+ {
+-	KConfig *config = new KConfig("kioslaverc");
+-	config->setGroup("Kamera Settings");
+-
+-	QString driver = config->readEntry("Driver", "");
+-
+-	bool found = false;
+-
+-	// search m_camSel for driver name
+-	for(QListViewItem *tmp = m_camSel->firstChild();
+-	    tmp != NULL;
+-	    tmp = tmp->nextSibling()) {
+-		if(tmp->text(0) == driver) {
+-			m_camSel->setSelected(tmp, true);
+-			m_camSel->ensureItemVisible(tmp);
+-			found = true;
+-			break;
++	QStringList groupList = m_config->groupList();
++	QStringList::Iterator it;
++	
++	for (it = groupList.begin(); it != groupList.end(); it++) {
++		if (*it != "<default>")	{
++			KCamera *kcamera = new KCamera(*it);
++			connect(kcamera, SIGNAL(error(const QString &)), SLOT(slot_error(const QString &)));
++			connect(kcamera, SIGNAL(error(const QString &, const QString &)), SLOT(slot_error(const QString &, const QString &)));
++			kcamera->load(m_config);
++			m_devices[*it] = kcamera;
+ 		}
+ 	}
++	
++	populateDeviceListView();
++}
+ 
+-	// no driver found, nothing left to do
+-	if(found == false) {
+-		setPortType(INDEX_NONE);
+-		return;
+-	}
+-
+-	QString port = config->readEntry("Port", "none");
+-
+-	if(port == "none") {
+-		setPortType(INDEX_NONE);
+-		return;
+-	} else if(port == "serial") {
+-		m_serialPortLineEdit->setText(config->readEntry("Path", ""));
+-		
+-		QString speed = config->readEntry("Speed", "");
+-
+-		// see if we can find 'speed' in available list - default
+-		// to maximum if not found
+-		for(int i = 0; i < m_serialSpeedCombo->count(); ++i) {
+-			m_serialSpeedCombo->setCurrentItem(i);
+-			if(m_serialSpeedCombo->currentText() == speed)
+-				break;
+-		}
++QString KKameraConfig::suggestName(const QString &name)
++{
++	QString new_name = name;
++	new_name.replace(QRegExp("/"), ""); // we cannot have a slash in a URI's host
+ 
+-		setPortType(INDEX_SERIAL);
+-	} else if(port == "parallel") {
+-		m_parallelPortLineEdit->setText(config->readEntry("Path", ""));
+-		setPortType(INDEX_PARALLEL);
+-	} else if(port == "usb") {
+-		setPortType(INDEX_USB);
+-	} else if(port == "ieee1394") {
+-		setPortType(INDEX_IEEE1394);
+-	} else if(port == "network") {
+-		m_networkHostLineEdit->setText(config->readEntry("NetHost",
+-								 ""));
+-		m_networkPortLineEdit->setText(config->readEntry("NetPort",
+-								 ""));
+-		setPortType(INDEX_NETWORK);
+-	}
+-
+-	m_cacheHackCB->setChecked(config->readBoolEntry("PreviewThumbs", true));
+-}
+-
+-void KKameraConfig::setCameraType(QListViewItem *item)
+-{
+-	CameraAbilities abilities;
+-
+-	char *name = tocstr(item->text(0));
+-
+-	// retrieve camera abilities structure
+-	if(gp_camera_abilities_by_name(name, &abilities) == GP_OK) {
+-		displayCameraAbilities(abilities);
+-		setPortType(INDEX_NONE);
++	if (!m_devices.contains(new_name)) return new_name;
++	
++	// try new names with a number appended until we find a free one
++	int i = 1;
++	while (i++ < 0xffff) {
++		new_name = name + " (" + QString::number(i) + ")";
++		if (!m_devices.contains(new_name)) return new_name;
++	}
++
++	return QString::null;
++}
++
++void KKameraConfig::slot_addCamera()
++{
++	KCamera *m_device = new KCamera(QString::null);
++	connect(m_device, SIGNAL(error(const QString &)), SLOT(slot_error(const QString &)));
++	connect(m_device, SIGNAL(error(const QString &, const QString &)), SLOT(slot_error(const QString &, const QString &)));
++	KameraDeviceSelectDialog dialog(this, m_device);
++	if (dialog.exec() == QDialog::Accepted) {
++		dialog.save();
++		m_device->setName(suggestName(m_device->model()));
++		m_devices.insert(m_device->name(), m_device);
++		populateDeviceListView();
+ 	} else {
+-		// XXX display error ?
++		delete m_device;
+ 	}
+ }
+ 
+-void KKameraConfig::setPortType(int type)
++void KKameraConfig::slot_removeCamera()
+ {
+-	// Enable the correct button
+-	m_portSelectGroup->setButton(type);
+-
+-	// Bring the right tab to the front
+-	m_settingsStack->raiseWidget(type);
++	QString name = m_deviceSel->currentItem()->text();
++	if (m_devices.contains(name)) {
++		KCamera *m_device = m_devices[name];
++		m_devices.remove(name);
++		delete m_device;
++		m_config->deleteGroup(name, true);
++		populateDeviceListView();
++	}
+ }
+ 
+-void KKameraConfig::testCamera(void)
++void KKameraConfig::slot_testCamera()
+ {
+-//	if(!openSelectedCamera())
+-//		return;
+-
+-//	KMessageBox::information(this, i18n("Camera test successful!"));
+-
+-//	closeCamera();
++	QString name = m_deviceSel->currentItem()->text();
++	if (m_devices.contains(name)) {
++		KCamera *m_device = m_devices[name];
++		if (m_device->test())
++			KMessageBox::information(this, i18n("Camera test was successful."));
++	}
+ }
+ 
+-void KKameraConfig::configureCamera(void)
++void KKameraConfig::slot_configureCamera()
+ {
+-	if(!openSelectedCamera())
+-		return;
+-//
+-//	if(gp_camera_config(m_camera) != GP_OK)
+-//		KMessageBox::error(this, i18n("Camera configuration failed."));
+-
+-	closeCamera();
++	QString name = m_deviceSel->currentItem()->text();
++	if (m_devices.contains(name)) {
++		KCamera *m_device = m_devices[name];
++		m_device->configure();
++	}
+ }
+ 
+-int KKameraConfig::doConfigureCamera(Camera *camera, CameraWidget *widgets)
++void KKameraConfig::slot_cameraSummary()
+ {
+-	KameraConfigDialog kcd(camera, widgets);
+-
+-	return kcd.exec() ? GP_PROMPT_OK : GP_PROMPT_CANCEL;
++	QString summary;
++	QString name = m_deviceSel->currentItem()->text();
++	if (m_devices.contains(name)) {
++		KCamera *m_device = m_devices[name];
++		summary = m_device->summary();
++		if (QString::null != summary) {
++			KMessageBox::information(this, summary);
++		}
++	}
+ }
+ 
+-int KKameraConfig::frontend_prompt(Camera *camera, CameraWidget *widgets)
++void KKameraConfig::slot_deviceMenu(QIconViewItem *item, const QPoint &point)
+ {
+-	if(m_instance)
+-		return m_instance->doConfigureCamera(camera, widgets);
++	if (item) {
++		QString name = item->text();
++		m_devicePopup->clear();
++		m_actions->action("camera_test")->plug(m_devicePopup);
++		m_actions->action("camera_remove")->plug(m_devicePopup);
++		m_actions->action("camera_configure")->plug(m_devicePopup);
++		m_actions->action("camera_summary")->plug(m_devicePopup);
++		m_devicePopup->popup(point);
++	}
+ }
+ 
+-bool KKameraConfig::openSelectedCamera(void)
++void KKameraConfig::slot_deviceSelected(QIconViewItem *item)
+ {
+-	QListViewItem *camera = m_camSel->selectedItem();
+-
+-	if(camera == NULL) {
+-		KMessageBox::error(this, i18n("No camera selected!"));
+-		return false;
+-	}
+-
+-	if(gp_camera_new(&m_camera) != GP_OK) {
+-		KMessageBox::error(this, i18n("Could not access driver."
+-				" Check your gPhoto2 installation."));
+-		return false;
+-	}
+-
+-	transferCameraPortInfoFromUI();
+-
+-	if(gp_camera_init(m_camera) != GP_OK) {
+-		gp_camera_free(m_camera);
+-		m_camera = NULL;
+-		KMessageBox::error(this, i18n("Unable to initialise camera."
+-			" Check your port settings and camera connectivity"
+-			" and try again."));
+-		return false;
+-	}
+-
+-	return true;
++	m_actions->action("camera_test")->setEnabled(item);
++	m_actions->action("camera_remove")->setEnabled(item);
++	m_actions->action("camera_configure")->setEnabled(item);
++	m_actions->action("camera_summary")->setEnabled(item);
+ }
+ 
+-void KKameraConfig::closeCamera(void)
++QString KKameraConfig::quickHelp() const
+ {
+-	if(m_camera)
+-		gp_camera_free(m_camera);
++	return i18n("<h1>Kamera Configuration</h1>\n"
++	  "This module allows you to configure support for your digital camera.\n"
++	  "You would need to select the camera's model and the port it is connected\n"
++	  "to on your computer (e.g. USB, Serial, Firewire). If your camera doesn't\n"
++	  "appear in the list of <i>Supported Cameras</i>, go to the\n"
++	  "<a href=\"http://www.gphoto.org\">GPhoto web site</a> for a possible update.<br><br>\n"
++	  "To view and download images from the digital camera, go to address\n"
++	  "<a href=\"camera:/\">camera:/</a> in Konqueror and other KDE applications.");
+ }
+ 
+-void KKameraConfig::transferCameraPortInfoFromUI(void)
++void KKameraConfig::slot_error(const QString &message)
+ {
+-	QButton *selected = m_portSelectGroup->selected();
++	KMessageBox::error(this, message);
++}
+ 
+-	memset(&m_camera->port, 0, sizeof(CameraPortInfo));
+-	
+-	if(selected == NULL) {
+-		m_camera->port->type = GP_PORT_NONE;
+-		return;
+-	}
+-
+-	QString type = selected->text();
+-
+-	if(type == i18n("serial")) {
+-		m_camera->port->type = GP_PORT_SERIAL;
+-		strcpy(m_camera->port->path,
+-			m_serialPortLineEdit->text().local8Bit());		//lukas: FIXME!!! no strcpy never ever
+-		m_camera->port->speed =
+-			m_serialSpeedCombo->currentText().toInt();
+-	} else if(type == i18n("parallel")) {
+-		m_camera->port->type = GP_PORT_PARALLEL;
+-		strcpy(m_camera->port->path,
+-			m_parallelPortLineEdit->text().local8Bit());	//lukas: FIXME!!!
+-	} else if(type == i18n("USB")) {
+-		m_camera->port->type = GP_PORT_USB;
+-		strcpy(m_camera->port->path, "usb:");
+-	} else if(type == i18n("IEEE1394")) {
+-		m_camera->port->type = GP_PORT_IEEE1394;
+-		strcpy(m_camera->port->path, "ieee1394");
+-	} else if(type == i18n("network")) {
+-		m_camera->port->type = GP_PORT_NETWORK;
+-//		strcpy(m_camera->port->path, "network");
+-//lukas: FIXME!!!
+-//		strcpy(m_cameraPortInfo.host,
+-//			m_networkHostLineEdit->text().local8Bit());	//lukas: FIXME!!!
+-//		m_cameraPortInfo.host_port =
+-//			m_networkPortLineEdit->text().toInt();
+-	}
++void KKameraConfig::slot_error(const QString &message, const QString &details)
++{
++	KMessageBox::detailedError(this, message, details);
+ }
+--- kdegraphics-2.2.2.orig/kamera/kcontrol/kamera.desktop
++++ kdegraphics-2.2.2/kamera/kcontrol/kamera.desktop
+@@ -1,18 +1,25 @@
+ [Desktop Entry]
++Encoding=UTF-8
+ Comment=Configure Kamera
++Comment[af]=konfigureer kamera
++Comment[ar]=اعداد Kamera
+ Comment[az]=Kameranı Quraşdır
++Comment[be]=Настроіць Kamera
+ Comment[bg]=Конфигуриране на Камера
++Comment[bs]=Podesi kameru
+ Comment[cs]=Nastavení Kamery
+-Comment[da]=Indstil Kamera
++Comment[da]=Indstil kamera
+ Comment[de]=Kamera einrichten
+ Comment[el]=Ρύθμιση Kamera
+ Comment[eo]=Agordu fotilon
+ Comment[es]=Configura Kamera
+ Comment[et]=Kaamera seadistamine
++Comment[eu]=Kamera konfiguratu
+ Comment[fi]=Aseta kameraa
+ Comment[fr]=Configuration de Kamera
+-Comment[he]=Kamera תורדגה
++Comment[he]=שינוי הגדרות Kamera
+ Comment[hu]=A Kamera beállítása
++Comment[id]=Konfigurasi kamera
+ Comment[is]=Stilla samskiptaforrit stafrænna myndavéla (Kamera)
+ Comment[it]=Configura Kamera
+ Comment[ja]=カメラの設定
+@@ -20,12 +27,13 @@
+ Comment[lt]=Kameros konfigūravimas
+ Comment[lv]=Konfigurē Kameru
+ Comment[mt]=Ikkonfigura Kamera
++Comment[nb]=Konfigurer kamera
+ Comment[nl]=Kamera instellen
+-Comment[no]=Konfigurer kamera
+-Comment[no_NY]=Set opp Kamera
++Comment[nn]=Set opp Kamera
+ Comment[pl]=Konfiguracja Kamery
+-Comment[pt_BR]=Configurar Kamera
+ Comment[pt]=Configuração do Kamera
++Comment[pt_BR]=Configurar Kamera
++Comment[ro]=Configurează aparatul foto digital
+ Comment[ru]=настройки камеры
+ Comment[sk]=Nastaviť program Kamera
+ Comment[sl]=Nastavitev Kamere
+@@ -34,12 +42,17 @@
+ Comment[ta]=Kamera¨Å ÅÊÅ¨Áì¸×õ
+ Comment[tr]=Kamera'yı Yapılandır
+ Comment[uk]=Налаштувати Kamera
++Comment[ven]=U lugisa tshaudzhia zwifanyiso
+ Comment[vi]=Cấu hình Kamera 
+ Comment[xh]=Qwalasela umfoti
+-Comment[zh_CN.GB2312]=配置照相机
++Comment[xx]=xx
++Comment[zh_CN]=配置照相机
++Comment[zh_TW]=設定 Kamera 照相機
++Comment[zu]=Hlanganisa ikhamera
+ Exec=kcmshell Peripherals/kamera
+ Icon=
+ Keywords=gphoto,camera,digicam,webcam,kamera
++Keywords[ar]=gphoto,كاميرا,كاميرا رقمية,كلميرا ويب,kamera
+ Keywords[az]=gphoto,kamera,digicam,veb kamera,Kamera,webcam
+ Keywords[cs]=gphoto,Kamera,Digitální kamera,Webová kamera,Foto
+ Keywords[de]=gphoto,Kamera,Digicam,Webcam
+@@ -49,36 +62,66 @@
+ Keywords[et]=gphoto,kaamera,digitaalne kaamera,veebikaamera,kamera
+ Keywords[fi]=gphoto,kamera,digicam,webcam
+ Keywords[fr]=gphoto,camera,digicam,webcam,kamera,caméscope,caméra
+-Keywords[he]=gphoto,kamera,תילטיגיד המלצמ,תשר תמלצמ,המלצמ
++Keywords[he]=gphoto,kamera,מצלמה,מצלמת רשת,מצלמה דיגיטלית
+ Keywords[hu]=gphoto,kamera,digitális kamera,webkamera,videókamera
+ Keywords[is]=gphoto,myndavél,stafræn myndavél,webcam,kamera
+-Keywords[it]=gphoto,camera,macchina fotografica,macchina fotografica digitale,webcam,kamera
++Keywords[it]=gphoto,camera,macchina fotografica digitale,webcam,kamera
+ Keywords[ja]=gphoto,カメラ,デジカム,ウェブカム,kamera
+ Keywords[ko]=gphoto,camera,digicam,webcam,kamera,사진,카메라,사진기,웹캠
+ Keywords[lv]=gfoto,camera,digicam,webcam,kamera
++Keywords[nb]=gphoto,kamera,digicam,webcam,webkamera
+ Keywords[nl]=gphoto,camera,digicam,webcam,kamera,foto
+-Keywords[no]=gphoto,kamera,digicam,webcam,webkamera
+-Keywords[no_NY]=gphoto,fotoapparat,digitalt kamera,webkamera,vevkamera,kamera
++Keywords[nn]=gphoto,fotoapparat,digitalt kamera,webkamera,vevkamera,kamera
+ Keywords[pl]=gphoto,kamera,kamera cyfrowa,kamera sieciowa
+-Keywords[pt_BR]=gphoto,câmera,digicam,webcam,kamera
+ Keywords[pt]=gphoto,câmara,digicam,webcam,kamera
++Keywords[pt_BR]=gphoto,câmera,digicam,webcam,kamera
++Keywords[ro]=gphoto,aparat,foto,digicam,webcam,camera,kamera
+ Keywords[sl]=gphoto,kamera,digicam,webcam
+ Keywords[sv]=gphoto,kamera,digital kamera,webbkamera,kamera
+ Keywords[tr]=gphoto,kamera,digicam,web kamera,Kamera,webcam
+ Keywords[uk]=gphoto,камера,цифрова камера,веб-камера,kamera
++Keywords[ven]=Tshinepe tsha g,Tshaudzhia zwifanyiso,digicam,webcam,Tshaudzhiazwifanyiso
+ Keywords[vi]=gphoto,camera,digicam,webcam,kamera,máy ảnh 
+ Keywords[xh]=gphoto,umfoti,digicam,webcam,umfoti
+-Keywords[zh_CN.GB2312]=gphoto,camera,digicam,webcam,kamera,照相机,数字相机
++Keywords[xx]=xx
++Keywords[zh_CN]=gphoto,camera,digicam,webcam,kamera,照相机,数字相机
++Keywords[zh_TW]=gphoto,攝影機,digicam,webcam,kamera
++Keywords[zu]=gphoto,ikhamera,digicam,webcam,ikhamera
+ Name=Digital Camera
+-Name[bg]=Камера
+-Name[eo]=Fotilo
+-Name[et]=Kaamera
+-Name[is]=Stafrænar myndavélar
+-Name[ja]=カメラ
+-Name[ko]=카메라
+-Name[ru]=Камера
+-Name[xh]=Umfoti
+-Name[zh_CN.GB2312]=照相机
++Name[af]=digitaal kamera
++Name[ar]=كاميرا رقمية
++Name[az]=Digital Kamera
++Name[bs]=Digitalna kamera
++Name[cs]=Digitální kamera
++Name[da]=Digitalt kamera
++Name[de]=Digitalkamera
++Name[el]=Ψηφιακή Φωτογραφική μηχανή
++Name[eo]=Cifereca fotilo
++Name[es]=Cámara digital
++Name[et]=Digitaalne kaamera
++Name[fi]=digitaalikamera
++Name[fr]=Appareil photo numérique
++Name[he]=מצלמה דיגיטלית
++Name[hu]=Digitális kamera
++Name[it]=Macchina fotografica digitale
++Name[ja]=デジタルカメラ
++Name[lt]=Skaitmeninė kamera
++Name[lv]=Digitālā Kamera
++Name[nl]=Digitale camera
++Name[nn]=Digitalkamera
++Name[pt]=Câmara Digital
++Name[pt_BR]=Câmera Digital
++Name[ro]=Aparat foto digital
++Name[sk]=Digitálny fotoaparát
++Name[sl]=Digitalna kamera
++Name[sv]=Digitalkamera
++Name[tr]=Sayısal Kamera
++Name[uk]=Цифровий фотоапарат
++Name[ven]=Tshau dzhia zwifanyiso tsha didzhithala
++Name[xh]=Camera Yesuntswana
++Name[xx]=xx
++Name[zh_TW]=數位相機
++Name[zu]=Ikhamera ebonisa inani ngalinye
+ SwallowExec=
+ SwallowTitle=
+ Terminal=false
+--- kdegraphics-2.2.2.orig/kamera/kcontrol/kamera.h
++++ kdegraphics-2.2.2/kamera/kcontrol/kamera.h
+@@ -1,4 +1,3 @@
+-
+ #ifndef __kamera_h__
+ #define __kamera_h__
+ 
+@@ -7,12 +6,9 @@
+ extern "C"
+ {
+ 	#include <gphoto2.h>
+-//Defination for this is missing in gphoto2.h
+-	int gp_camera_exit (Camera *camera); 
+ }
+ 
+ class QWidget;
+-class KListView;
+ class QRadioButton;
+ class QPushButton;
+ class QComboBox;
+@@ -20,10 +16,19 @@
+ class QLineEdit;
+ class QWidgetStack;
+ class QCheckBox;
++class QIconViewItem;
++
++class KCamera;
++class KameraDeviceSelectDialog;
++class KSimpleConfig;
++class KIconView;
++class KActionCollection;
++class KToolBar;
+ 
+ class KKameraConfig : public KCModule
+ {
+ 	Q_OBJECT
++	friend class KameraDeviceSelectDialog;
+ 
+ public:
+ 	KKameraConfig(QWidget *parent = 0L, const char *name = 0L);
+@@ -34,60 +39,47 @@
+ 	void save();
+ 	void defaults();
+ 	int buttons();
++	QString quickHelp() const;
+ 
+-	static int frontend_prompt(Camera *camera, CameraWidget *widgets);
+-	int doConfigureCamera(Camera *camera, CameraWidget *widgets);
++protected:
++	QString suggestName(const QString &name);
+ 
+ protected slots:
+-	void setCameraType(QListViewItem *item);
+-	void setPortType(int type);
+-
+-	void configureCamera(void);
+-	void testCamera(void);
++	void slot_deviceMenu(QIconViewItem *item, const QPoint &point);
++	void slot_deviceSelected(QIconViewItem *item);
++	void slot_addCamera();
++	void slot_removeCamera();
++	void slot_configureCamera();
++	void slot_cameraSummary();
++	void slot_testCamera();
++	void slot_error(const QString &message);
++	void slot_error(const QString &message, const QString &details);
+ 
+ private:
++	KSimpleConfig *m_config;
++	typedef QMap<QString, KCamera *> CameraDevicesMap;
++	CameraDevicesMap m_devices;
++
+ 	// manage widgets
+ 	void displayGPFailureDialogue(void);
+ 	void displayGPSuccessDialogue(void);
+ 	void displayCameraAbilities(const CameraAbilities &abilities);
+-	bool populateCameraListView(void);
+-	bool openSelectedCamera(void);
+-	void closeCamera(void);
+-	void transferCameraPortInfoFromUI(void);
+-	
+-	// camera model selection listview
+-	KListView *m_camSel;
++	void populateDeviceListView(void);
+ 
+-	QWidgetStack *m_settingsStack;
+-
+-	// port selection radio buttons
+-	QRadioButton *m_serialRB;
+-	QRadioButton *m_parallelRB;
+-	QRadioButton *m_USBRB;
+-	QRadioButton *m_IEEE1394RB;
+-	QRadioButton *m_networkRB;
+-
+-	// configure camera options push button
+-	QPushButton *m_configureCamera;
+-
+-	QCheckBox *m_cacheHackCB;
+-
+-	// port settings widgets
+-	QVButtonGroup *m_portSelectGroup;
+-	QComboBox *m_serialSpeedCombo;
+-	QLineEdit *m_serialPortLineEdit;
+-	QLineEdit *m_parallelPortLineEdit;
+-	QLineEdit *m_networkHostLineEdit;
+-	QLineEdit *m_networkPortLineEdit;
++	void autoDetect(void);
++	
++	// camera device selection listview
++	KIconView *m_deviceSel;
++	KActionCollection *m_actions;
++	QPushButton *m_addCamera, *m_removeCamera, *m_testCamera, *m_configureCamera;
++	KToolBar *m_toolbar;
++	QPopupMenu *m_devicePopup;
+ 
+ 	// true if libgphoto2 was initialised successfully in
+ 	// the constructor
+ 	bool m_gpInitialised;
+ 
+ 	static KKameraConfig *m_instance;
+-
+-	Camera *m_camera;
+ };
+ 
+ #endif
+-
+--- kdegraphics-2.2.2.orig/kamera/kcontrol/kameraconfigdialog.cpp
++++ kdegraphics-2.2.2/kamera/kcontrol/kameraconfigdialog.cpp
+@@ -7,6 +7,7 @@
+ #include <qlineedit.h>
+ #include <qcombobox.h>
+ #include <qslider.h>
++#include <qpushbutton.h>
+ #include <qvbuttongroup.h>
+ #include <qradiobutton.h>
+ #include <qvbox.h>
+--- kdegraphics-2.2.2.orig/kamera/kcontrol/kameradevice.cpp
++++ kdegraphics-2.2.2/kamera/kcontrol/kameradevice.cpp
+@@ -0,0 +1,441 @@
++#include <qobject.h>
++#include <qlayout.h>
++#include <qwidgetstack.h>
++#include <qvbuttongroup.h>
++#include <qvgroupbox.h>
++#include <qcombobox.h>
++#include <qlineedit.h>
++#include <qradiobutton.h>
++#include <qwhatsthis.h>
++#include <qlabel.h>
++#include <qgrid.h>
++
++#include <klocale.h>
++#include <kconfig.h>
++#include <klistview.h>
++#include <kmessagebox.h>
++#include <kdebug.h>
++
++#include <gphoto2.h>
++#include "kamera.h"
++#include "kameraconfigdialog.h"
++#include "kameradevice.moc"
++
++// Define some parts of the old API
++#define SERIAL_SUPPORTED(port) ((port & GP_PORT_SERIAL) != 0)
++#define USB_SUPPORTED(port) ((port & GP_PORT_USB) != 0)
++#define GP_PROMPT_OK 0
++#define GP_PROMPT_CANCEL -1
++
++static const int INDEX_NONE= 0;
++static const int INDEX_SERIAL = 1;
++static const int INDEX_USB= 3;
++static GPContext *glob_context = 0;
++
++KCamera::KCamera(const QString &name)
++{
++	m_name = name;
++	m_camera = NULL;
++}
++
++KCamera::~KCamera()
++{
++	if(m_camera)
++		gp_camera_free(m_camera);
++	if(m_abilitylist)
++		gp_abilities_list_free(m_abilitylist);
++}
++
++bool KCamera::initInformation()
++{
++	if (!m_model)
++		return false;
++
++	if(gp_abilities_list_new(&m_abilitylist) != GP_OK) {
++		emit error(i18n("Could not allocate memory for abilities list."));
++		return false;
++	}
++	if(gp_abilities_list_load(m_abilitylist, glob_context) != GP_OK) {
++		emit error(i18n("Could not load ability list."));
++		return false;
++	}
++	int index = gp_abilities_list_lookup_model(m_abilitylist, m_model.local8Bit().data());
++	if(index < 0) {
++		emit error(i18n("Description of abilities for camera %1 is not available."
++					" Configuration options may be incorrect.").arg(m_model));
++		return false;
++	}
++        gp_abilities_list_get_abilities(m_abilitylist, index, &m_abilities);
++}
++
++bool KCamera::initCamera()
++{
++	if (m_camera)
++		return m_camera;
++	else {
++		int result;
++
++		initInformation();
++
++		if (!m_model || !m_path)
++			return false;
++
++		result = gp_camera_new(&m_camera);
++		if (result != GP_OK) {
++			// m_camera is not initialized, so we cannot get result as string
++			emit error(i18n("Could not access driver. Check your gPhoto2 installation."));
++			return false;
++		}
++
++		// set the camera's model
++		GPPortInfo info;
++		GPPortInfoList *il;
++		gp_port_info_list_new(&il);
++		gp_port_info_list_load(il);
++		gp_port_info_list_get_info(il, gp_port_info_list_lookup_path(il, m_path.local8Bit().data()), &info);
++		gp_port_info_list_free(il);
++		gp_camera_set_abilities(m_camera, m_abilities);
++		gp_camera_set_port_info(m_camera, info);
++
++		// this might take some time (esp. for non-existant camera) - better be done asynchronously
++		result = gp_camera_init(m_camera, glob_context);
++		if (result != GP_OK) {
++			gp_camera_free(m_camera);
++			m_camera = NULL;
++			emit error(
++				i18n("Unable to initialize camera. Check your port settings and camera connectivity and try again."),
++				gp_result_as_string(result));
++			return false;
++		}
++
++		return m_camera;
++	}
++}
++
++Camera* KCamera::camera()
++{
++	initCamera();
++	return m_camera;
++}
++
++QString KCamera::summary()
++{
++	int result;
++	CameraText	summary;
++	
++	initCamera();
++
++	result = gp_camera_get_summary(m_camera, &summary, glob_context);
++	if (result != GP_OK)
++		return i18n("No camera summary information is available.\n");
++	return QString(summary.text);
++}
++
++bool KCamera::configure()
++{
++	CameraWidget *window;
++	int result;
++	
++	initCamera();
++
++	result = gp_camera_get_config(m_camera, &window, glob_context);
++	if (result != GP_OK) {
++		emit error(i18n("Camera configuration failed."), gp_result_as_string(result));
++		return false; 
++	}
++
++	KameraConfigDialog kcd(m_camera, window);
++	result = kcd.exec() ? GP_PROMPT_OK : GP_PROMPT_CANCEL;
++
++	if (result == GP_PROMPT_OK) {
++		result = gp_camera_set_config(m_camera, window, glob_context);
++		if (result != GP_OK) {
++			emit error(i18n("Camera configuration failed."), gp_result_as_string(result));
++			return false;
++		}
++	}
++	
++	return true;
++}
++
++bool KCamera::test()
++{
++	// TODO: Make testing non-blocking (maybe via KIO?)
++	// Currently, a failed serial test times out at about 30 sec.
++	if (camera()) {
++		return true;
++	}
++}
++
++void KCamera::load(KConfig *config)
++{
++	config->setGroup(m_name);
++	m_model = config->readEntry("Model");
++	m_path = config->readEntry("Path");
++	invalidateCamera();
++}
++
++void KCamera::save(KConfig *config)
++{
++	config->setGroup(m_name);
++	config->writeEntry("Model", m_model);
++	config->writeEntry("Path", m_path);
++}
++
++QString KCamera::portName()
++{
++	QString port = m_path.left(m_path.find(":")).lower();
++	if (port == "serial") return i18n("Serial");
++	if (port == "usb") return i18n("USB");
++	return i18n("Unknown port");
++}
++
++void KCamera::setName(const QString &name)
++{
++	m_name = name;
++}
++
++void KCamera::setModel(const QString &model)
++{
++	m_model = model;
++	invalidateCamera();
++	initInformation();
++}
++
++void KCamera::setPath(const QString &path)
++{
++	m_path = path;
++	invalidateCamera();
++}
++
++void KCamera::invalidateCamera()
++{
++	if (m_camera) {
++		gp_camera_free(m_camera);
++		m_camera = NULL;
++	}
++}
++
++bool KCamera::isTestable()
++{
++	return true;
++}
++
++bool KCamera::isConfigurable()
++{
++	initInformation();
++	return m_abilities.operations & GP_OPERATION_CONFIG;
++}
++
++QStringList KCamera::supportedPorts()
++{
++	initInformation();
++	QStringList ports;
++	if (SERIAL_SUPPORTED(m_abilities.port)) ports.append("serial");
++	if (USB_SUPPORTED(m_abilities.port)) ports.append("usb");
++	return ports;
++}
++
++CameraAbilities KCamera::abilities()
++{
++	return m_abilities;
++}
++
++// ---------- KameraSelectCamera ------------
++
++KameraDeviceSelectDialog::KameraDeviceSelectDialog(QWidget *parent, KCamera *device)
++	: KDialogBase(parent, "kkameradeviceselect", true, i18n("Select camera device"), Ok | Cancel)
++{
++	m_device = device;
++	connect(m_device, SIGNAL(error(const QString &)), SLOT(slot_error(const QString &)));
++	connect(m_device, SIGNAL(error(const QString &, const QString &)), SLOT(slot_error(const QString &, const QString &)));
++
++	QWidget *page = new QWidget( this ); 
++	setMainWidget(page);
++
++	// a layout with vertical boxes
++	QHBoxLayout *topLayout = new QHBoxLayout(page, KDialog::marginHint(), KDialog::spacingHint());
++	topLayout->setAutoAdd(true);
++
++	// the models list
++	m_modelSel = new KListView(page);
++	m_modelSel->addColumn(i18n("Supported Cameras"));
++	m_modelSel->setColumnWidthMode(0, QListView::Maximum);
++	connect(m_modelSel, SIGNAL(selectionChanged(QListViewItem *)), SLOT(slot_setModel(QListViewItem *)));
++	// make sure listview only as wide as it needs to be
++	m_modelSel->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred));
++
++	QWidget *right = new QWidget(page);
++	QVBoxLayout *rightLayout = new QVBoxLayout(right);
++	rightLayout->setSpacing(10);
++
++	/*
++	QGrid *grid = new QGrid(2, right);
++	new QLabel(i18n("Name:"), grid);
++	m_nameEdit = new QLineEdit(m_device->name(), grid);
++	rightLayout->addWidget(grid);
++	*/
++
++	m_portSelectGroup = new QVButtonGroup(i18n("Port"), right);
++	rightLayout->addWidget(m_portSelectGroup);
++	QVGroupBox *portSettingsGroup = new QVGroupBox(i18n("Port Settings"), right);
++	rightLayout->addWidget(portSettingsGroup);
++
++	QGrid *grid = new QGrid(2, right);
++	rightLayout->addWidget(grid);
++	grid->setSpacing(5);
++
++	// Create port type selection radiobuttons.
++	m_serialRB = new QRadioButton(i18n("Serial"), m_portSelectGroup);
++	m_portSelectGroup->insert(m_serialRB, INDEX_SERIAL);
++	QWhatsThis::add(m_serialRB, i18n("If this option is checked, the camera would have to be connected one of the serial ports (known as COM in Microsoft Windows) in your computer."));
++	m_USBRB = new QRadioButton(i18n("USB"), m_portSelectGroup);
++	m_portSelectGroup->insert(m_USBRB, INDEX_USB);
++	QWhatsThis::add(m_USBRB, i18n("If this option is checked, the camera would have to be connected to one of the USB slots in your computer or USB hub."));
++	// Create port settings widget stack
++	m_settingsStack = new QWidgetStack(portSettingsGroup);
++	connect(m_portSelectGroup, SIGNAL(clicked(int)), m_settingsStack, SLOT(raiseWidget(int)));
++
++	// none tab
++	m_settingsStack->addWidget(new
++		QLabel(i18n("No port type selected."),
++		m_settingsStack), INDEX_NONE);
++
++	// serial tab
++	grid = new QGrid(2, m_settingsStack);
++	grid->setSpacing(5);
++	new QLabel(i18n("Port"), grid);
++	m_serialPortCombo = new QComboBox(TRUE, grid);
++	QWhatsThis::add(m_serialPortCombo, i18n("Here you should choose the serial port you connect the camera to."));
++	m_settingsStack->addWidget(grid, INDEX_SERIAL);
++
++	grid = new QGrid(2, m_settingsStack);
++	grid->setSpacing(5);
++	new QLabel(i18n("Port"), grid);
++
++	m_settingsStack->addWidget(new
++		QLabel(i18n("No further configuration is required for USB."),
++		m_settingsStack), INDEX_USB);
++
++	// query gphoto2 for existing serial ports
++	GPPortInfoList *list;
++	GPPortInfo info;
++	int gphoto_ports;
++	gp_port_info_list_new(&list);
++	if(gp_port_info_list_load(list) >= 0) {
++		gphoto_ports = gp_port_info_list_count(list);
++	}
++	for (int i = 0; i < gphoto_ports; i++) {
++		if (gp_port_info_list_get_info(list, i, &info) >= 0) {
++			if (strncmp(info.path, "serial:", 7) == 0)
++				m_serialPortCombo->insertItem(QString::fromLatin1(info.path).mid(7));
++		}
++	}
++	gp_port_info_list_free(list);
++	
++	// add a spacer
++	rightLayout->addItem( new QSpacerItem(0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding) );
++
++	populateCameraListView();
++	load();
++}
++
++bool KameraDeviceSelectDialog::populateCameraListView()
++{
++	gp_abilities_list_new (&m_device->m_abilitylist);
++	gp_abilities_list_load(m_device->m_abilitylist, glob_context);
++	int numCams = gp_abilities_list_count(m_device->m_abilitylist);
++	CameraAbilities a;
++
++	if(numCams < 0) {
++		// XXX libgphoto2 failed to get te camera list
++		return false;
++	} else {
++		for(int x = 0; x < numCams; ++x) {
++			if(gp_abilities_list_get_abilities(m_device->m_abilitylist, x, &a) == GP_OK) {
++				new QListViewItem(m_modelSel, a.model);
++			}
++		}
++		return true;
++	}
++}
++
++void KameraDeviceSelectDialog::save()
++{
++	m_device->setModel(m_modelSel->currentItem()->text(0));
++
++	QString type = m_portSelectGroup->selected()->text();
++
++	if(type == i18n("Serial"))
++		m_device->setPath("serial:" + m_serialPortCombo->currentText());
++	else if(type == i18n("USB"))
++ 		m_device->setPath("usb:");
++}
++
++void KameraDeviceSelectDialog::load()
++{
++	QString path = m_device->path();
++	QString port = path.left(path.find(":")).lower();
++
++	if (port == "serial") setPortType(INDEX_SERIAL);
++	if (port == "usb") setPortType(INDEX_USB);
++	
++	QListViewItem *modelItem = m_modelSel->firstChild();
++	do {
++		if (modelItem->text(0) == m_device->model()) {
++			m_modelSel->setSelected(modelItem, true);
++			m_modelSel->ensureItemVisible(modelItem);
++		}
++	} while ( modelItem = modelItem->nextSibling());
++}
++
++void KameraDeviceSelectDialog::slot_setModel(QListViewItem *item)
++{
++	QString model = item->text(0);
++	
++	CameraAbilities abilities;
++	int index = gp_abilities_list_lookup_model(m_device->m_abilitylist, model.local8Bit().data());
++	if(index < 0) {
++		slot_error(i18n("Description of abilities for camera %1 is not available."
++				" Configuration options may be incorrect.").arg(model));
++	}
++	int result = gp_abilities_list_get_abilities(m_device->m_abilitylist, index, &abilities);
++	if (result == GP_OK) {
++		// enable radiobuttons for supported port types
++		m_serialRB->setEnabled(SERIAL_SUPPORTED(abilities.port));
++		m_USBRB->setEnabled(USB_SUPPORTED(abilities.port));
++
++		// turn off any selected port
++		QButton *selected = m_portSelectGroup->selected();
++		if(selected != NULL)
++			selected->toggle();
++	
++	        // if there's only one available port type, make sure it's selected
++		if ((SERIAL_SUPPORTED(abilities.port)?1:0) + (USB_SUPPORTED(abilities.port)?1:0)) {
++			if (SERIAL_SUPPORTED(abilities.port)) setPortType(INDEX_SERIAL);
++			if (USB_SUPPORTED(abilities.port)) setPortType(INDEX_USB);
++		};
++	} else {
++		slot_error(i18n("Description of abilities for camera %1 is not available."
++			     " Configuration options may be incorrect.").arg(model));
++	}
++}
++
++void KameraDeviceSelectDialog::setPortType(int type)
++{
++	// Enable the correct button
++	m_portSelectGroup->setButton(type);
++
++	// Bring the right tab to the front
++	m_settingsStack->raiseWidget(type);
++}
++
++void KameraDeviceSelectDialog::slot_error(const QString &message)
++{
++	KMessageBox::error(this, message);
++}
++
++void KameraDeviceSelectDialog::slot_error(const QString &message, const QString &details)
++{
++	KMessageBox::detailedError(this, message, details);
++}
+--- kdegraphics-2.2.2.orig/kamera/kcontrol/kameradevice.h
++++ kdegraphics-2.2.2/kamera/kcontrol/kameradevice.h
+@@ -0,0 +1,98 @@
++
++#ifndef __kameradevice_h__
++#define __kameradevice_h__
++
++#include <qmap.h>
++#include <kdialogbase.h>
++#include <config.h>
++
++class KConfig;
++class QString;
++class KListView;
++class QWidgetStack;
++class QVButtonGroup;
++class QComboBox;
++class QLineEdit;
++class QRadioButton;
++
++extern "C" {
++	#include <gphoto2.h>
++}
++
++class KCamera : public QObject {
++	friend class KameraDeviceSelectDialog;
++	Q_OBJECT
++public:
++	KCamera(const QString &name);
++	~KCamera();
++	void invalidateCamera();
++	bool configure();
++	void load(KConfig *m_config);
++	void save(KConfig *m_config);
++	bool test();
++	QStringList supportedPorts();
++
++	Camera* camera();
++	QString name() { return m_name ; }
++	QString model() { return m_model; }
++	QString path() { return m_path; }
++	QString portName();
++
++	QString summary();
++	CameraAbilities abilities();
++
++	void setName(const QString &name);
++	void setModel(const QString &model);
++	void setPath(const QString &path);
++
++	bool isTestable();
++	bool isConfigurable();
++
++signals:
++	void error(const QString &message);
++	void error(const QString &message, const QString &details);
++	
++protected:
++	bool initInformation();
++	bool initCamera();
++//	void doConfigureCamera(Camera *camera, CameraWidget *widgets);
++//	int frontend_prompt(Camera *camera, CameraWidget *widgets);
++
++	Camera *m_camera;
++//	KConfig *m_config;
++	QString m_name; // the camera's real name
++	QString m_model;
++	QString m_path;
++	CameraAbilities m_abilities;
++	CameraAbilitiesList *m_abilitylist;
++};
++
++class KameraDeviceSelectDialog : public KDialogBase
++{
++	Q_OBJECT
++public:
++	KameraDeviceSelectDialog(QWidget *parent, KCamera *device);
++	void save();
++	void load();
++protected slots:
++	void slot_setModel(QListViewItem *item);
++	void slot_error(const QString &message);
++	void slot_error(const QString &message, const QString &details);
++protected:
++	KCamera *m_device;
++	
++	bool populateCameraListView(void);
++	void setPortType(int type);
++
++	// port settings widgets
++	KListView *m_modelSel;
++	QLineEdit *m_nameEdit;
++	QWidgetStack *m_settingsStack;
++	QVButtonGroup *m_portSelectGroup;
++	QComboBox *m_serialPortCombo;
++	// port selection radio buttons
++	QRadioButton *m_serialRB;
++	QRadioButton *m_USBRB;
++};
++
++#endif
+--- kdegraphics-2.2.2.orig/kamera/Makefile.am
++++ kdegraphics-2.2.2/kamera/Makefile.am
+@@ -1 +1 @@
+-SUBDIRS = kcontrol kioslave
++SUBDIRS = kcontrol kioslave pics
+--- kdegraphics-2.2.2.orig/kamera/README
++++ kdegraphics-2.2.2/kamera/README
+@@ -0,0 +1,7 @@
++Dependencies:
++
++gphoto2 which you currently need to get from gphoto's CVS using
++cvs -d:pserver:anonymous@cvs.gphoto.sourceforge.net:/cvsroot/gphoto login
++cvs -d:pserver:anonymous@cvs.gphoto.sourceforge.net:/cvsroot/gphoto co gphoto2
++
++You need gphoto 2.0 final (or later).
+--- kdegraphics-2.2.2.orig/kamera/configure.in.in
++++ kdegraphics-2.2.2/kamera/configure.in.in
+@@ -10,8 +10,6 @@
+ # Clear working variables
+ gphoto2_includes=
+ gphoto2_libraries=
+-gpio_includes=
+-gpio_libraries=
+ 
+ 
+ 
+@@ -21,8 +19,6 @@
+ [if test "$withval" = "no" ; then
+   gphoto2_includes=none
+   gphoto2_libraries=none
+-  gpio_includes=none
+-  gpio_libraries=none
+ fi])dnl
+ 
+ AC_ARG_WITH(gphoto2-includes,
+@@ -33,14 +29,6 @@
+ [  --with-gphoto2-libraries=DIR   gphoto2 libraries are in DIR],
+ gphoto2_libraries="$withval")
+ 
+-AC_ARG_WITH(gpio-includes,
+-[  --with-gpio-includes=DIR    gpio include files are in DIR],
+-gpio_includes="$withval")
+-
+-AC_ARG_WITH(gpio-libraries,
+-[  --with-gpio-libraries=DIR   gpio libraries are in DIR],
+-gpio_libraries="$withval")
+-
+ AC_MSG_CHECKING(for gPhoto2)
+ 
+ 
+@@ -79,45 +67,6 @@
+ gphoto2_includes="$ac_cv_gphoto2_includes"
+ fi
+ 
+-
+-
+-#
+-# Search for gpio include files.
+-#
+-if test "$gpio_includes" = ""; then
+-AC_CACHE_VAL(ac_cv_gpio_includes,
+-[
+-ac_gpio_save_LIBS="$LIBS"
+-#
+-LIBS="-lgpio $LIBS"
+-#
+-ac_cv_gpio_includes="none"
+-AC_TRY_COMPILE([#include <gpio.h>
+-],[int a;],
+-[
+-# gpio.h is in the standard search path.
+-ac_cv_gpio_includes=
+-],
+-[
+-# gpio.h is not in the standard search path.
+-# Locate it and put its directory in `gpio_includes'
+-#
+-for dir in /usr/include /usr/local/include \
+-           /usr/include/gpio /usr/local/include/gpio; do
+-if test -f "$dir/gpio.h"; then
+-ac_cv_gpio_includes="$dir"
+-break
+-fi
+-done
+-])
+-#
+-LIBS="$ac_gpio_save_LIBS"
+-])
+-gpio_includes="$ac_cv_gpio_includes"
+-fi                                                                              
+-
+-
+-
+ #
+ # Search for libgphoto2
+ #
+@@ -126,7 +75,7 @@
+ [
+ ac_gphoto2_save_LIBS="$LIBS"
+ #
+-LIBS="-lgphoto2 $LIBS"
++LIBS="-lgphoto2_port -lgphoto2 $LIBS"
+ #
+ ac_cv_gphoto2_libraries="none"
+ AC_TRY_LINK([#include <gphoto2.h>],[gp_init(0);],
+@@ -153,70 +102,24 @@
+ fi
+ 
+ 
+-#
+-# Search for libgpio
+-#
+-if test "$gpio_libraries" = ""; then
+-AC_CACHE_VAL(ac_cv_gpio_libraries,
+-[
+-ac_gpio_save_LIBS="$LIBS"
+-#
+-LIBS="-lgpio $LIBS"
+-#
+-ac_cv_gpio_libraries="none"
+-AC_TRY_LINK([#include <gpio.h>],[gpio_init(0);],
+-[
+-# libgpio is in the standard search path.
+-ac_cv_gpio_libraries=
+-],
+-[
+-# libgpio is not in the standard search path.
+-# Locate it and put its directory in `gpio_libraries'
+- 
+-for dir in /usr/lib /usr/local/lib; do
+-if test -d "$dir" && test "`ls $dir/libgpio.* 2> /dev/null`" != ""; then
+-ac_cv_gpio_libraries="$dir"
+-break
+-fi
+-done
+-])
+-#
+-LIBS="$ac_gpio_save_LIBS"
+-])
+-#
+-gpio_libraries="$ac_cv_gpio_libraries"
+-fi                                                                              
+-
+-
+ 
+-# Intialise compiler and linker flag variables for export
+-if test "$gphoto2_includes" = "none" -o "$gphoto2_libraries" = "none" -o \
+-        "$gpio_includes" = "none" -o "$gpio_libraries" = "none"; then
++# Initialise compiler and linker flag variables for export
++if test "$gphoto2_includes" = "none" -o "$gphoto2_libraries" = "none" ; then
+         with_kamera="no"
+ else
+         with_kamera="yes"
+ 
+-        if test "$gpio_libraries" = ""; then
+-                GPIO_LIBS="-lgpio"
+-        else
+-                GPIO_LIBS="-L$gpio_libraries -lgpio"
+-        fi
+-
+-        if test "$gphoto2_libraries" = ""; then
++        if test "$gphoto2_libraries" = "" -o "$gphoto2_libraries" = "none"; then
+                 GPHOTO2_LIBS="-lgphoto2"
+         else
+                 GPHOTO2_LIBS="-L$gphoto2_libraries -lgphoto2"
+         fi
+ 
+ 
+-        if test "$gphoto2_includes" != ""; then
++        if test "$gphoto2_includes" != "" -a "$gphoto2_includes" != "none"; then
+                 GPHOTO2_INCS="-I$gphoto2_includes"
+         fi
+ 
+-        if test "$gpio_includes" != ""; then
+-                GPIO_INCS="-I$gpio_includes"
+-        fi
+-
+ 	AC_DEFINE(HAVE_GPHOTO2,1,[Define if you have gPhoto2 installed])
+ fi
+ 
+@@ -225,29 +128,21 @@
+ # Export compiler and linker flags for replacement in Makefile
+ AC_SUBST(GPHOTO2_INCS)
+ AC_SUBST(GPHOTO2_LIBS)
+-AC_SUBST(GPIO_INCS)
+-AC_SUBST(GPIO_LIBS)
+ 
+ 
+ 
+ # Display results of configuration
+ gphoto2_libraries_result="$gphoto2_libraries"
+ gphoto2_includes_result="$gphoto2_includes"
+-gpio_libraries_result="$gpio_libraries"
+-gpio_includes_result="$gpio_includes"
+ 
+ test "$gphoto2_libraries" = "" && gphoto2_libraries_result="in default path"
+ test "$gphoto2_includes" = "" && gphoto2_includes_result="in default path"
+-test "$gpio_libraries" = "" && gpio_libraries_result="in default path"
+-test "$gpio_includes" = "" && gpio_includes_result="in default path"
+ 
+ test "$gphoto2_libraries" = "none" && gphoto2_libraries_result="(none)"
+ test "$gphoto2_includes" = "none" && gphoto2_includes_result="(none)"
+-test "$gpio_libraries" = "none" && gpio_libraries_result="(none)"
+-test "$gpio_includes" = "none" && gpio_includes_result="(none)"
+ 
+ AC_MSG_RESULT(
+-  [gphoto2 libraries $gphoto2_libraries_result, gphoto2 headers $gphoto2_includes_result, gpio libraries $gpio_libraries_result, gpio headers $gpio_includes_result])
++  [gphoto2 libraries $gphoto2_libraries_result, gphoto2 headers $gphoto2_includes_result])
+ 
+ ]) dnl end of KDE_FIND_GPHOTO2 definition
+ 
+--- kdegraphics-2.2.2.orig/kamera/kioslave/CVS/Root
++++ kdegraphics-2.2.2/kamera/kioslave/CVS/Root
+@@ -1 +1 @@
+-:pserver:rkrusty@cvs.kde.org:/home/kde
++/var/cvs
+--- kdegraphics-2.2.2.orig/kamera/kioslave/CVS/Entries
++++ kdegraphics-2.2.2/kamera/kioslave/CVS/Entries
+@@ -1,6 +1,6 @@
+-/.cvsignore/1.1/Sat Jan 27 20:47:02 2001//TKDE_2_2_BRANCH
+-/Makefile.am/1.1/Thu Jan  4 18:37:25 2001//TKDE_2_2_BRANCH
+-/kamera.cpp/1.2.2.4/Tue Oct  2 04:14:04 2001//TKDE_2_2_BRANCH
+-/kamera.h/1.2.2.3/Tue Oct  2 04:14:04 2001//TKDE_2_2_BRANCH
+-/kamera.protocol/1.1.4.1/Tue Oct  2 04:14:04 2001//TKDE_2_2_BRANCH
++/.cvsignore/1.1/Sat Jan 27 20:47:02 2001//
++/Makefile.am/1.4/Wed Feb 20 08:40:28 2002//
++/kamera.cpp/1.15/Wed Feb 27 16:32:22 2002//
++/kamera.h/1.8/Wed Feb 27 16:32:22 2002//
++/kamera.protocol/1.2/Sun Oct  7 01:23:16 2001//
+ D
+--- kdegraphics-2.2.2.orig/kamera/kioslave/Makefile.am
++++ kdegraphics-2.2.2/kamera/kioslave/Makefile.am
+@@ -1,24 +1,17 @@
+-# $Id: debian.diff 142499 2002-03-11 22:50:33Z rkrusty $
++# $Id: debian.diff 142499 2002-03-11 22:50:33Z rkrusty $
+ # Makefile for kdebase/kioslave/kamera
+ 
+-INCLUDES= -I$(srcdir)/../.. -I$(srcdir)/.. $(all_includes) $(GPHOTO2_INCS) $(GPIO_INCS)
++INCLUDES= -I$(srcdir)/../.. -I$(srcdir)/.. $(all_includes) $(GPHOTO2_INCS)
+ 
+ ####### Files
+ 
+-lib_LTLIBRARIES = kio_kamera.la
++kde_module_LTLIBRARIES = kio_kamera.la
+ 
+ kio_kamera_la_SOURCES = kamera.cpp
+-kio_kamera_la_LIBADD  = $(LIB_KIO) $(GPHOTO2_LIBS)
+-kio_kamera_la_LDFLAGS = $(all_libraries) -module -avoid-version
++kio_kamera_la_LIBADD  = $(LIB_KIO) -lgphoto2
++kio_kamera_la_LDFLAGS = $(all_libraries) $(GPHOTO2_LIBS) -module $(KDE_PLUGIN)
+ 
+ noinst_HEADERS = kamera.h
+ 
+ kdelnk_DATA = kamera.protocol
+ kdelnkdir = $(kde_servicesdir)
+-
+-check_PROGRAMS = linktest
+-linktest_SOURCES = $(kio_kamera_la_SOURCES) linktest.cpp
+-linktest.cpp:
+-	echo "int main() {};" > linktest.cpp
+-linktest_LDFLAGS  = $(all_libraries) -module -avoid-version
+-linktest_LDADD = $(kio_kamera_la_LIBADD)
+--- kdegraphics-2.2.2.orig/kamera/kioslave/kamera.cpp
++++ kdegraphics-2.2.2/kamera/kioslave/kamera.cpp
+@@ -1,19 +1,26 @@
+-
+ #include <stdlib.h>
+ #include <unistd.h>
++#include <stdio.h>
+ #include <sys/stat.h>
++#include <sys/types.h>
++#include <signal.h>
++#include <errno.h>
++
++#include <qfile.h>
++#include <qtextstream.h>
+ 
+ #include <kdebug.h>
+ #include <kinstance.h>
+ #include <kconfig.h>
++#include <ksimpleconfig.h>
++#include <klocale.h>
++#include <kprotocolinfo.h>
++#include <kio/slaveconfig.h>
+ 
+ #include "kamera.h"
++#include <config.h>
+ 
+-// XXX HACK HACK HACK
+-// XXX All tocstr(string) references can be safely replaced with
+-// XXX string.local8Bit() as soon as the gphoto2 API uses 'const char *'
+-// XXX instead of 'char *' in calls that don't modify the string
+-#define tocstr(x) ((char *)((x).local8Bit().operator const char *()))
++#define tocstr(x) ((x).local8Bit())
+ 
+ using namespace KIO;
+ 
+@@ -40,113 +47,180 @@
+ }
+ 
+ KameraProtocol::KameraProtocol(const QCString &pool, const QCString &app)
+-: SlaveBase("gphoto", pool, app),
++: SlaveBase("camera", pool, app),
+ m_camera(NULL)
+ {
+-	int gpr;
+-	if((gpr = gp_init(GP_DEBUG_LOW)) != GP_OK) {
+-		error(KIO::ERR_UNKNOWN, gp_result_as_string(gpr));
+-	}
++	// attempt to initialize libgphoto2 and chosen camera (requires locking)
++	// (will init m_camera, since the m_camera's configuration is empty)
++	m_camera = 0;
+ 
+-	if((gpr = gp_camera_new(&m_camera)) != GP_OK) {
+-		error(KIO::ERR_UNKNOWN, gp_result_as_string(gpr));
+-	}
++	
++	m_config = new KSimpleConfig(KProtocolInfo::config("camera"));
++	autoDetect();
++	m_context = gp_context_new();
+ }
+ 
+ KameraProtocol::~KameraProtocol()
+ {
+-	if(m_camera)
+-		gp_camera_free(m_camera);	
+-	
+-	gp_exit();
++	if(m_camera) {
++		closeCamera();
++ 		gp_camera_free(m_camera);
++	}
+ }
+ 
+-void KameraProtocol::get(const KURL &url)
++void KameraProtocol::autoDetect(void)
+ {
+-	kdDebug() << "KameraProtocol::get(" << url.path() << ")" << endl;
++	GPContext *glob_context = NULL;
++	QStringList groupList = m_config->groupList();
+ 
+-	if(openCamera() == false)
+-		return;
++        int i, count;
++        CameraList list;
++        CameraAbilitiesList *al;
++        GPPortInfoList *il;
++        const char *model, *value;
+ 
+-	int (*gp_get)(Camera *, const  char *, const char *, CameraFile *);
+-	KURL tmpUrl(url);
++        gp_abilities_list_new (&al);
++        gp_abilities_list_load (al, glob_context);
++        gp_port_info_list_new (&il);
++        gp_port_info_list_load (il);
++        gp_abilities_list_detect (al, il, &list, glob_context);
++        gp_abilities_list_free (al);
++        gp_port_info_list_free (il);
+ 
+-	if(m_previewThumbs &&
+-	   cameraSupportsPreview() &&
+-	   stripCachePath(tmpUrl)) {
+-		gp_get = gp_camera_file_get_preview;
+-	} else {
+-		gp_get = gp_camera_file_get_file;
++        count = gp_list_count (&list);
++	
++	for (i = 0 ; i<count ; i++) {
++		gp_list_get_name  (&list, i, &model);
++		gp_list_get_value (&list, i, &value);
++
++		if (groupList.contains(model))
++			continue;
++		kdDebug() << "Adding " << model << " at " << value << endl;
++		m_config->setGroup(model);
++		m_config->writeEntry("Model",model);
++		m_config->writeEntry("Path",value);
+ 	}
++}
+ 
+-	CameraFile *cameraFile = gp_file_new();
+ 
+-//	We must list filename in the folder before get it!!
++// initializes the camera for usage - should be done before operations over the wire
++bool KameraProtocol::openCamera(void) {
++	if (!m_camera)
++		reparseConfiguration();
++	return true;
++}
+ 
+-	CameraList *list = gp_list_new();
+-        int ret;
+- 
+-        ret = readCameraFolder(list, tocstr(tmpUrl.directory()));
+-	gp_list_free(list);
+-	if(ret != GP_OK){
+-                error(KIO::ERR_COULD_NOT_READ, gp_result_as_string(ret));
+-		closeCamera();
+-                return;
+-        }
++// should be done after operations over the wire
++void KameraProtocol::closeCamera(void)
++{
++	int gpr;
++	if ((gpr=gp_camera_exit(m_camera,m_context))!=GP_OK) {
++		kdDebug() << "closeCamera failed with " << gp_result_as_string(gpr) << endl;
++	}
++	// HACK: gp_camera_exit() in gp 2.0 does not close the port if there
++	//       is no camera_exit function.
++	gp_port_close(m_camera->port);
++	return;
++}
+ 
+-	int gpr = gp_get(m_camera, 
+-			tocstr(tmpUrl.directory()),
+-			tocstr(tmpUrl.filename()),cameraFile);
++// The KIO slave "get" function (starts a download from the camera)
++// The actual returning of the data is done in the frontend callback functions.
++void KameraProtocol::get(const KURL &url)
++{
++	kdDebug() << "KameraProtocol::get(" << url.path() << ")" << endl;
+ 
+-	switch(gpr) {
+-	case GP_OK:
+-		break;
+-	case GP_ERROR_FILE_NOT_FOUND:
+-	case GP_ERROR_DIRECTORY_NOT_FOUND:
+-		error(KIO::ERR_DOES_NOT_EXIST, tmpUrl.filename());
+-		closeCamera();
+-		return ;
+-	default:
+-		error(KIO::ERR_UNKNOWN, gp_result_as_string(gpr));
+-		closeCamera();
++	CameraFileType fileType;
++	int gpr;
++	if (url.host().isEmpty()) {
++		error(KIO::ERR_DOES_NOT_EXIST, url.path());
+ 		return;
+ 	}
+ 
+-	totalSize(cameraFile->size);
+-	mimeType(cameraFile->type);
++	if(!openCamera())
++		return;
+ 
+-	QByteArray fileData;
++	// emit info message
++	infoMessage( i18n("Retrieving data from camera <b>%1</b>").arg(m_cfgModel) );
+ 
+-	// XXX using assign() here causes segfault, prolly because
+-	// gp_file_free is called before fileData goes out of scope
+-	fileData.duplicate(cameraFile->data, cameraFile->size);
+-	data(fileData);
++	// Note: There's no need to re-read directory for each get() anymore
++	gp_file_new(&m_file);
+ 
+-	gp_file_free(cameraFile);
++	// emit the total size (we must do it before sending data to allow preview)
++	CameraFileInfo info;
++	gpr = gp_camera_file_get_info(m_camera, tocstr(url.directory(false)), tocstr(url.fileName()), &info, m_context);
++	if (gpr != GP_OK) {
++		gp_file_free(m_file);
++		if ((gpr == GP_ERROR_FILE_NOT_FOUND) || (gpr == GP_ERROR_DIRECTORY_NOT_FOUND))
++			error(KIO::ERR_DOES_NOT_EXIST, url.path());
++		closeCamera();
++		return;
++	}
+ 
+-	processedSize(cameraFile->size);
++	// at last, a proper API to determine whether a thumbnail was requested.
++	if(cameraSupportsPreview() && metaData("thumbnail") == "1") {
++		kdDebug() << "get() retrieving the thumbnail" << endl;
++		fileType = GP_FILE_TYPE_PREVIEW;
++		if (info.preview.fields & GP_FILE_INFO_SIZE) {
++			totalSize(info.preview.size);
++		}
++	} else {
++		kdDebug() << "get() retrieving the full-scale photo" << endl;
++		fileType = GP_FILE_TYPE_NORMAL;
++		if (info.file.fields & GP_FILE_INFO_SIZE) {
++			totalSize(info.file.size);
++		}
++	}
++	
++	// fetch the data
++	m_fileSize = 0;
++	gpr = gp_camera_file_get(m_camera, tocstr(url.directory(false)), tocstr(url.filename()), fileType, m_file, m_context);
++	switch(gpr) {
++		case GP_OK:
++			break;
++		case GP_ERROR_FILE_NOT_FOUND:
++		case GP_ERROR_DIRECTORY_NOT_FOUND:
++			gp_file_free(m_file);
++			error(KIO::ERR_DOES_NOT_EXIST, url.filename());
++			closeCamera();
++			return ;
++		default:
++			gp_file_free(m_file);
++			error(KIO::ERR_UNKNOWN, gp_result_as_string(gpr));
++			closeCamera();
++			return;
++	}
++	const char *xdata;
++	unsigned long int xsize;
++	gp_file_get_data_and_size(m_file,&xdata,&xsize);
++	QByteArray	barr(xsize);
++	barr.setRawData(xdata,xsize);
++	data(barr);
++	barr.resetRawData(xdata,xsize);
++
++	// emit the mimetype
++	// NOTE: we must first get the file, so that CameraFile->name would be set
++	const char *fileMimeType;
++	gp_file_get_mime_type(m_file, &fileMimeType);
++	mimeType(fileMimeType);
+ 
+ 	finished();
+-
++	gp_file_free(m_file);
+ 	closeCamera();
+ }
+ 
++// The KIO slave "stat" function.
+ void KameraProtocol::stat(const KURL &url)
+ {
+-	kdDebug() << "KameraProtocol::stat(" << url.path() << ")" << endl;
+-
+-	if(openCamera() == false)
+-		return;
++	kdDebug() << "KameraProtocol("<<this<<")::stat(" << url.path() << ")" << endl;
+ 
+ 	if(url.path() == "/") {
+ 		statRoot();
+ 	} else {
+ 		statRegular(url);
+ 	}
+-
+-	closeCamera();
+ }
+ 
++// Implements stat("/") -- which always returns the same value.
+ void KameraProtocol::statRoot(void)
+ {
+ 	UDSEntry entry;
+@@ -170,71 +244,73 @@
+ 	finished();
+ }
+ 
++// Implements a regular stat() of a file / directory, returning all we know about it
+ void KameraProtocol::statRegular(const KURL &url)
+ {
+-	CameraListEntry cle;
+ 	UDSEntry entry;
+-	KURL tmpUrl(url);
++	int gpr;
+ 
+-	if(m_previewThumbs && cameraSupportsPreview())
+-		stripCachePath(tmpUrl);
++	if (openCamera() == false)
++		return;
+ 
+-	if(findCameraListEntry(tmpUrl, cle)) {
+-		translateCLEToUDS(entry, cle);
+-		statEntry(entry);
+-		finished();
+-	} else {
+-		error(KIO::ERR_DOES_NOT_EXIST, url.path());
++	// Is "url" a directory?
++	CameraList *dirList;
++	gp_list_new(&dirList);
++	kdDebug() << "statRegular() Requesting directories list for " << url.directory() << endl;
++	gpr = gp_camera_folder_list_folders(m_camera, tocstr(url.directory()), dirList, m_context);
++	closeCamera();
++	if (gpr != GP_OK) {
++		if ((gpr == GP_ERROR_FILE_NOT_FOUND) || (gpr == GP_ERROR_DIRECTORY_NOT_FOUND))
++			error(KIO::ERR_DOES_NOT_EXIST, url.path());
++		gp_list_free(dirList);
++		return;
+ 	}
+-}
+-
+-bool KameraProtocol::stripCachePath(KURL &url)
+-{
+-	kdDebug() << "KameraProtocol::stripCachePath(" << url.path() <<
+-		")" << endl;
+-
+-	const char *paths[] = { ".pics/small/",
+-				".pics/med/",
+-				".pics/large/",
+-				NULL };
+-
+-	for(int p = 0; paths[p] != NULL; ++p) {
+-		if(url.path().contains(paths[p]) == 1) {
+-			int i = url.path().find(paths[p]);
+-			QString newPath = url.path();
+-			newPath.replace(i, strlen(paths[p]), "");
+-
+-			url.setPath(newPath);
+ 
+-			return true;
++	const char *name;
++	for(int i = 0; i < gp_list_count(dirList); i++) {
++		gp_list_get_name(dirList, i, &name);
++		if (url.filename().compare(name) == 0) {
++			gp_list_free(dirList);
++			UDSEntry entry;
++			translateDirectoryToUDS(entry, url.fileName());
++			statEntry(entry);
++			finished();
++			return;
+ 		}
+ 	}
+-
+-	return false;
++	gp_list_free(dirList);
++	
++	// Is "url" a file?
++	CameraFileInfo info;
++	gpr = gp_camera_file_get_info(m_camera, tocstr(url.directory(false)), tocstr(url.fileName()), &info, m_context);
++	closeCamera();
++	if (gpr != GP_OK) {
++		if ((gpr == GP_ERROR_FILE_NOT_FOUND) || (gpr == GP_ERROR_DIRECTORY_NOT_FOUND))
++			error(KIO::ERR_DOES_NOT_EXIST, url.path());
++		return;
++	}
++	translateFileToUDS(entry, info);
++	statEntry(entry);
++	finished();
+ }
+ 
++// The KIO slave "del" function.
+ void KameraProtocol::del(const KURL &url, bool isFile)
+ {
+ 	kdDebug() << "KameraProtocol::del(" << url.path() << ")" << endl;
+ 
+-	if(openCamera() == false)
++	if(!openCamera())
+ 		return;
+-
+-	if(cameraSupportsDel() && isFile){
+-		CameraList *list = gp_list_new();
+-        	KURL tmpUrl(url);
++	if (!cameraSupportsDel()) {
++		error(KIO::ERR_CANNOT_DELETE, url.filename());
++		return;
++	}
++	if(isFile){
++		CameraList *list;
++		gp_list_new(&list);
+ 		int ret;
+  
+-        	ret = readCameraFolder(list, tocstr(tmpUrl.directory()));
+-        	gp_list_free(list);
+-        	if(ret != GP_OK){
+-                	error(KIO::ERR_COULD_NOT_READ, gp_result_as_string(ret));
+-                	closeCamera();
+-                	return;
+-        	}
+-
+-		ret = gp_camera_file_delete(m_camera, tocstr(url.directory()),
+-					tocstr(url.filename()));
++		ret = gp_camera_file_delete(m_camera, tocstr(url.directory(false)), tocstr(url.filename()), m_context);
+ 
+ 		if(ret != GP_OK) {
+ 			error(KIO::ERR_CANNOT_DELETE, url.filename());
+@@ -245,199 +321,319 @@
+ 	closeCamera();
+ }
+ 
++// The KIO slave "listDir" function.
+ void KameraProtocol::listDir(const KURL &url)
+ {
+ 	kdDebug() << "KameraProtocol::listDir(" << url.path() << ")" << endl;
+ 
+-	if(openCamera() == false)
++	if (url.host().isEmpty()) {
++		// List the available cameras
++		QStringList groupList = m_config->groupList(); 
++		kdDebug() << "Found cameras: " << groupList.join(", ") << endl;
++		QStringList::Iterator it;
++		UDSEntry entry;
++		UDSAtom atom;
++		for (it = groupList.begin(); it != groupList.end(); it++) {
++			if (*it != "<default>") {
++				entry.clear();
++				atom.m_uds = UDS_FILE_TYPE; // UDS type
++				atom.m_long = S_IFDIR; // directory
++				entry.append(atom);
++
++				atom.m_uds = UDS_NAME;
++				atom.m_str = *it;
++				entry.append(atom);
++
++				atom.m_uds = UDS_ACCESS;
++				atom.m_long = S_IRUSR | S_IRGRP | S_IROTH |
++					S_IWUSR | S_IWGRP | S_IWOTH;
++				entry.append(atom);
++				
++				atom.m_uds = UDS_URL;
++				atom.m_str = QString::fromLatin1("camera://") + *it + QString::fromLatin1("/");
++				entry.append(atom);
++				
++				listEntry(entry, false);
++			}
++		}
++		listEntry(entry, true);
++		finished();
++		return;
++	}
++	
++	if (!openCamera())
+ 		return;
+ 
+-	CameraList *list = gp_list_new();
+-	int ret;
++	CameraList *dirList;
++	CameraList *fileList;
++	gp_list_new(&dirList);
++	gp_list_new(&fileList);
++	int gpr;
+ 
+-	if((ret = readCameraFolder(list, url.path())) != GP_OK) {
+-		gp_list_free(list);
+-		error(KIO::ERR_COULD_NOT_READ, gp_result_as_string(ret));
++	gpr = readCameraFolder(url.path(), dirList, fileList);
++	if(gpr != GP_OK) {
++		kdDebug() << "read Camera Folder failed:" << gp_result_as_string(gpr) <<endl;
++		closeCamera();
++		gp_list_free(dirList);
++		gp_list_free(fileList);
++		error(KIO::ERR_COULD_NOT_READ, gp_result_as_string(gpr));
+ 		return;
+ 	}
+ 
+-	totalSize(gp_list_count(list));
++	totalSize(gp_list_count(dirList) + gp_list_count(fileList));
+ 
+ 	UDSEntry entry;
++	const char *name;
++	
++	for(int i = 0; i < gp_list_count(dirList); ++i) {
++		gp_list_get_name(dirList, i, &name);
++		translateDirectoryToUDS(entry, QString::fromLocal8Bit(name));
++		listEntry(entry, false);
++	}
+ 
+-	for(int i = 0; i < gp_list_count(list); ++i) {
+-		CameraListEntry *cameraListEntry = gp_list_entry(list, i);
++	CameraFileInfo info;
+ 
+-		translateCLEToUDS(entry, *cameraListEntry);
++	for(int i = 0; i < gp_list_count(fileList); ++i) {
++		gp_list_get_name(fileList, i, &name);
++		// we want to know more info about files (size, type...)
++		gp_camera_file_get_info(m_camera, tocstr(url.path()), name, &info, m_context);
++		translateFileToUDS(entry, info);
+ 		listEntry(entry, false);
+ 	}
++	closeCamera();
+ 
+-	listEntry(entry, true);
+-
+-	gp_list_free(list);
++	gp_list_free(fileList);
++	gp_list_free(dirList);
+ 
++	listEntry(entry, true); // 'entry' is not used in this case - we only signal list completion
+ 	finished();
+-
+-	closeCamera();
+ }
+ 
+-void KameraProtocol::loadSettings(void)
++void KameraProtocol::setHost(const QString& host, int port, const QString& user, const QString& pass )
+ {
++	kdDebug() << "KameraProtocol::setHost(" << host << ", " << port << ", " << user << ", " << pass << ")" << endl;
++	int gpr, idx;
+ 
+-	KConfig config("kioslaverc");
+-	config.setGroup("Kamera Settings");
++	if (!host.isEmpty()) {
++		// Read configuration
++		m_config->setGroup(host);
++		QString m_cfgModel = m_config->readEntry("Model");
++		QString m_cfgPath = m_config->readEntry("Path");
++
++		kdDebug() << "model is " << m_cfgModel << ", port is " << m_cfgPath << endl;
++
++		if (m_camera) {
++			kdDebug() << "Configuration change detected" << endl;
++			if (GP_OK!=gp_camera_exit(m_camera,m_context)) {
++				kdDebug() << "camera exit failed for old cam?\n";
++			}
++			gp_camera_unref(m_camera);
++			m_camera = NULL;
++			infoMessage( i18n("Reinitializing camera") );
++		} else {
++			kdDebug() << "Initializing camera" << endl;
++			infoMessage( i18n("Initializing camera") );
++		}
++		// fetch abilities
++		CameraAbilitiesList *abilities_list;
++		gp_abilities_list_new(&abilities_list);
++		gp_abilities_list_load(abilities_list, m_context);
++		idx = gp_abilities_list_lookup_model(abilities_list, tocstr(m_cfgModel));
++		if (idx < 0) {
++			gp_abilities_list_free(abilities_list);
++			kdDebug() << "Unable to get abilities for model: " << m_cfgModel << endl;
++			error(KIO::ERR_UNKNOWN, gp_result_as_string(gpr));
++			return;
++		}
++		gp_abilities_list_get_abilities(abilities_list, idx, &m_abilities);
++		gp_abilities_list_free(abilities_list);
+ 
+-	QString driver = config.readEntry("Driver", "Directory Browse");
+-	QString port = config.readEntry("Port", "none");
++		// fetch port
++		GPPortInfoList *port_info_list;
++		GPPortInfo port_info;
++		gp_port_info_list_new(&port_info_list);
++		gp_port_info_list_load(port_info_list);
++		idx = gp_port_info_list_lookup_path(port_info_list, tocstr(m_cfgPath));
++		if (idx < 0) {
++			gp_port_info_list_free(port_info_list);
++			kdDebug() << "Unable to get port info for path: " << m_cfgPath << endl;
++			error(KIO::ERR_UNKNOWN, gp_result_as_string(gpr));
++			return;
++		}
++		gp_port_info_list_get_info(port_info_list, idx, &port_info);
++		gp_port_info_list_free(port_info_list);
+ 
+-	strcpy(m_camera->model, tocstr(driver));
+-
+-	if(port == "none") {
+-		m_camera->port->type=GP_PORT_NONE;
+-	} else if(port == "serial") {
+-		m_camera->port->type=GP_PORT_SERIAL;
+-		QString path = config.readEntry("Path");
+-		strcpy(m_camera->port->path, tocstr(path));
+-		m_camera->port->speed = config.readNumEntry("Speed");
+-	} else if(port == "parallel") {
+-                m_camera->port->type=GP_PORT_PARALLEL;
+-		QString path = config.readEntry("Path");
+-                strcpy(m_camera->port->path, tocstr(path));
+-	} else if(port == "usb") {
+-                m_camera->port->type=GP_PORT_USB;
+-// XXX HACK!!                
+-		strcpy(m_camera->port->name,"Universal Serial Bus");
+-		QString path = config.readEntry("Path");
+-                strcpy(m_camera->port->path,tocstr(path));
+-	} else if(port == "ieee1394") {
+-                m_camera->port->type=GP_PORT_IEEE1394;
+-	} else if(port == "network") {
+-                m_camera->port->type=GP_PORT_NETWORK;
++		// create a new camera object
++		gpr = gp_camera_new(&m_camera);
++		if(gpr != GP_OK) {
++			error(KIO::ERR_UNKNOWN, gp_result_as_string(gpr));
++			return;
++		}
++	
++		// register gphoto2 callback functions
++		gp_context_set_status_func(m_context, frontendCameraStatus, this);
++		gp_context_set_progress_funcs(m_context, frontendProgressStart, frontendProgressUpdate, NULL, this);
++		// gp_camera_set_message_func(m_camera, ..., this)
++
++		// set model and port
++		gp_camera_set_abilities(m_camera, m_abilities);
++		gp_camera_set_port_info(m_camera, port_info);
++		kdDebug() << "Opening camera model " << m_cfgModel << " at " << m_cfgPath << endl;
++#if 0
++		// initialize the camera (might take time on a non-existant or disconnected camera)
++		gpr = gp_camera_init(m_camera, m_context);
++		if(gpr != GP_OK) {
++			gp_camera_unref(m_camera);
++			m_camera = NULL;
++			m_cfgModel = ""; // force a configuration reload (since init didn't complete)
++			kdDebug() << "Unable to init camera: " << gp_result_as_string(gpr) << endl;
++			error(KIO::ERR_UNKNOWN, gp_result_as_string(gpr));
++			return;
++		}
++		gp_camera_exit(m_camera, m_context);
++#endif
+ 	}
++}
+ 
+-	m_previewThumbs = config.readBoolEntry("PreviewThumbs", false);
++void KameraProtocol::reparseConfiguration(void)
++{
++	// we have no global config, do we?
+ }
+ 
+-bool KameraProtocol::openCamera(void)
++// translate a CameraFileInfo to a UDSEntry which we can return as a directory listing entry
++void KameraProtocol::translateFileToUDS(UDSEntry &udsEntry, const CameraFileInfo &info)
+ {
+-	int gpr;
++	UDSAtom atom;
++
++	udsEntry.clear();
+ 
+-	// load camera settings from kioslaverc
++	atom.m_uds = UDS_FILE_TYPE; // UDS type
++	atom.m_long = S_IFREG; // file
++	udsEntry.append(atom);
++	
++	if (info.file.fields & GP_FILE_INFO_NAME) {
++		atom.m_uds = UDS_NAME;
++		atom.m_str = QString::fromLocal8Bit(info.file.name);
++		udsEntry.append(atom);
++	}
+ 
+-	// attempt to initialise libgphoto2 and chosen camera
+-	// XXX Move library init to constructor/destructor for efficiency ?
+-	loadSettings();
+-	if((gpr = gp_camera_init(m_camera)) != GP_OK) {
+-		error(KIO::ERR_UNKNOWN, gp_result_as_string(gpr));
+-		return false;
+-	}
+-	if(gp_camera_abilities_by_name(m_camera->model,
+-                                        m_camera->abilities) != GP_OK){
+-		gp_camera_exit(m_camera);
+-                return false;
++	if (info.file.fields & GP_FILE_INFO_SIZE) {
++		atom.m_uds = UDS_SIZE;
++		atom.m_long = info.file.size;
++		udsEntry.append(atom);
+ 	}
+ 	
+-	return true;
+-}
++	if (info.file.fields & GP_FILE_INFO_TYPE) {
++		atom.m_uds = UDS_MIME_TYPE;
++		atom.m_str = QString::fromLatin1(info.file.type);
++		udsEntry.append(atom);
++	}
++	
++	if (info.file.fields & GP_FILE_INFO_PERMISSIONS) {
++		atom.m_uds = UDS_ACCESS;
++		atom.m_long = 0;
++		atom.m_long |= (info.file.permissions & GP_FILE_PERM_READ) ? (S_IRUSR | S_IRGRP | S_IROTH) : 0;
++		// we cannot represent individual FP_FILE_PERM_DELETE permission in the Unix access scheme
++		// since the parent directory's write permission defines that
++		udsEntry.append(atom);
++	} else {
++		// basic permissions, in case the camera doesn't provide permissions info
++		atom.m_uds = UDS_ACCESS;
++		atom.m_long = S_IRUSR | S_IRGRP | S_IROTH;
++		udsEntry.append(atom);
++	}
+ 
+-void KameraProtocol::closeCamera(void)
+-{
+-	gp_camera_exit(m_camera);
++	// TODO: We do not handle info.preview in any way
+ }
+ 
+-void KameraProtocol::translateCLEToUDS(UDSEntry &udsEntry,
+-					const CameraListEntry &cleEntry)
++// translate a directory name to a UDSEntry which we can return as a directory listing entry
++void KameraProtocol::translateDirectoryToUDS(UDSEntry &udsEntry, const QString &dirname)
+ {
+ 	UDSAtom atom;
+ 
+ 	udsEntry.clear();
+ 
++	atom.m_uds = UDS_FILE_TYPE; // UDS type
++	atom.m_long = S_IFDIR; // directory
++	udsEntry.append(atom);
++
+ 	atom.m_uds = UDS_NAME;
+-	atom.m_str = cleEntry.name;
++	atom.m_str = dirname;
+ 	udsEntry.append(atom);
+ 
+ 	atom.m_uds = UDS_ACCESS;
+ 	atom.m_long = S_IRUSR | S_IRGRP | S_IROTH |
+ 			S_IWUSR | S_IWGRP | S_IWOTH;
+ 	udsEntry.append(atom);
+-
+-	atom.m_uds = UDS_FILE_TYPE;
+-	switch(cleEntry.type) {
+-	case GP_LIST_FILE:
+-		 atom.m_long = S_IFREG; break;
+-//XXX I don't how to handle GP_LIST_CAMERA so...
+-	case GP_LIST_CAMERA:
+-	case GP_LIST_FOLDER:
+-		 atom.m_long = S_IFDIR; break;
+-	}
+-	udsEntry.append(atom);
+ }
+ 
+ bool KameraProtocol::cameraSupportsDel(void)
+ {
+-        return (m_camera->abilities->file_operations &&
+-                        GP_FILE_OPERATION_DELETE);
++        return (m_abilities.file_operations & GP_FILE_OPERATION_DELETE);
+ }
+ 
+ bool KameraProtocol::cameraSupportsPut(void)
+ {
+-        return (m_camera->abilities->folder_operations &&
+-                        GP_FOLDER_OPERATION_PUT_FILE);
++        return (m_abilities.folder_operations & GP_FOLDER_OPERATION_PUT_FILE);
+ }
+ 
+ bool KameraProtocol::cameraSupportsPreview(void)
+ {
+-	return (m_camera->abilities->file_operations && 
+-			GP_FILE_OPERATION_PREVIEW);
++	return (m_abilities.file_operations & GP_FILE_OPERATION_PREVIEW);
+ }
+ 
+-bool KameraProtocol::findCameraListEntry(const KURL &url,
+-					 CameraListEntry &cle)
++int KameraProtocol::readCameraFolder(const QString &folder, CameraList *dirList, CameraList *fileList)
+ {
+-	CameraList *list = gp_list_new();
++	kdDebug() << "KameraProtocol::readCameraFolder(" << folder << ")" << endl;
+ 
+-	if(readCameraFolder(list, url.directory()) != GP_OK) {
+-		gp_list_free(list);
+-		return false;
+-	}
++	int gpr;
++	if((gpr = gp_camera_folder_list_folders(m_camera, tocstr(folder), dirList, m_context)) != GP_OK)
++		return gpr;
++	if((gpr = gp_camera_folder_list_files(m_camera, tocstr(folder), fileList, m_context)) != GP_OK)
++		return gpr;
++	return GP_OK;
++}
+ 
+-	for(int i = 0; i < gp_list_count(list); ++i) {
+-		CameraListEntry *tmp= gp_list_entry(list, i);
++void KameraProtocol::frontendProgressUpdate(
++	GPContext *context, unsigned int id, float current, void *data
++) {
++	KameraProtocol *object = (KameraProtocol*)data;
++
++	object->processedSize(current); // hack: call slot directly 
++}
++
++unsigned int KameraProtocol::frontendProgressStart(
++	GPContext *context, float totalsize, const char *format, va_list args,
++	void *data
++) {
++	KameraProtocol *object = (KameraProtocol*)data;
++
++	int size=vsnprintf(NULL, 0, format, args);
++	if(size<=0)
++		return GP_OK; // vsnprintf is broken, better don't do anything.
+ 
+-		if(url.fileName() == tmp->name) {
+-			memcpy(&cle, tmp, sizeof(CameraListEntry));
+-			gp_list_free(list);
+-			return true;
+-		}
+-	}
++	char *status=new char[size+1];
++	vsnprintf(status, size, format, args);
++	
++	object->infoMessage(QString::fromLocal8Bit(status));
++	delete status;
+ 
+-	gp_list_free(list);
++	object->totalSize(totalsize); // hack: call slot directly 
+ 
+-	return false;
++	return GP_OK;
+ }
+ 
+-int KameraProtocol::readCameraFolder(CameraList *list, const QString &folder)
++// this callback function is activated on every status message from gphoto2
++void KameraProtocol::frontendCameraStatus(GPContext *context, const char *format, va_list args, void *data)
+ {
+-	int gpr;
++	KameraProtocol *object = (KameraProtocol*)data;
++	int size=vsnprintf(NULL, 0, format, args);
++	if(size<=0)
++		return; // vsnprintf is broken, better don't do anything.
+ 
+-	if((gpr = gp_camera_folder_list_folders(m_camera, tocstr(folder),
+-					list)) != GP_OK)
+-		return gpr;
++	char *status=new char[size+1];
++	vsnprintf(status, size, format, args);
+ 	
+-	CameraList *fl = gp_list_new();
+-
+-	if((gpr = gp_camera_folder_list_files(m_camera, tocstr(folder),
+-					fl)) != GP_OK) {
+-		gp_list_free(fl);
+-		return gpr;
+-	}
+-
+-	for(int i = 0; i < gp_list_count(fl); ++i) {
+-		CameraListEntry *e = gp_list_entry(fl, i);
+-		gp_list_append(list, e->name, e->type);
+-	}
+-
+-	gp_list_free(fl);
+-
+-	return GP_OK;
++	object->infoMessage(QString::fromLocal8Bit(status));
++	delete status;
+ }
+--- kdegraphics-2.2.2.orig/kamera/kioslave/kamera.h
++++ kdegraphics-2.2.2/kamera/kioslave/kamera.h
+@@ -2,14 +2,15 @@
+ #ifndef __kamera_h__
+ #define __kamera_h__
+ 
++#include <config.h>
+ #include <kio/slavebase.h>
+ 
+ extern "C" {
+ 	#include <gphoto2.h>
+-// Defination for this function in gphoto2.h is missing
+-	int gp_camera_exit(Camera *camera);
+ }
+ 
++class KSimpleConfig;
++
+ class KameraProtocol : public KIO::SlaveBase
+ {
+ public:
+@@ -19,26 +20,43 @@
+ 	virtual void get(const KURL &url);
+ 	virtual void stat(const KURL &url);
+ 	virtual void del(const KURL &url, bool isFile);
+-	void listDir(const KURL &url);
++        virtual void setHost(const QString& host, int port, const QString& user, const QString& pass );
++	virtual void listDir(const KURL &url);
+ 
+ private:
+ 	Camera *m_camera;
+-	bool m_previewThumbs;
++	CameraAbilities m_abilities;
++	KSimpleConfig *m_config;
++
++	GPContext	*m_context;
+ 
+-	void loadSettings(void);
++	void autoDetect(void);
++
++	void reparseConfiguration(void);
+ 	bool openCamera(void);
+ 	void closeCamera(void);
+ 
+ 	void statRoot(void);
+ 	void statRegular(const KURL &url);
+-	bool stripCachePath(KURL &url);
+-	void translateCLEToUDS(KIO::UDSEntry &udsEntry,
+-				const CameraListEntry &cleEntry);
++        void translateFileToUDS(KIO::UDSEntry &udsEntry, const CameraFileInfo &info);
++	void translateDirectoryToUDS(KIO::UDSEntry &udsEntry, const QString &dirname);
+ 	bool cameraSupportsPreview(void);
+ 	bool cameraSupportsDel(void);
+ 	bool cameraSupportsPut(void);
+-	bool findCameraListEntry(const KURL &url, CameraListEntry &cle);
+-	int readCameraFolder(CameraList *list, const QString &folder);
++	int readCameraFolder(const QString &folder, CameraList *dirList, CameraList *fileList);
++	QString lockFileName();
++	void lock();
++	void unlock();
++
++	QString m_cfgModel;
++	QString m_cfgPath;
++
++	CameraFile *m_file;
++	int m_fileSize;
++
++	// gphoto2 frontend callbacks
++	static void frontendCameraStatus(GPContext *context, const char *format, va_list args, void *data);
++	static unsigned int frontendProgressStart(GPContext *, float, const char *, void *, void *);
++	static void frontendProgressUpdate(GPContext *context, unsigned int id, float current, void *data);
+ };
+-
+ #endif
+--- kdegraphics-2.2.2.orig/kamera/pics/CVS/Root
++++ kdegraphics-2.2.2/kamera/pics/CVS/Root
+@@ -1 +1 @@
+-:pserver:rkrusty@cvs.kde.org:/home/kde
++/var/cvs
+--- kdegraphics-2.2.2.orig/kamera/pics/CVS/Entries
++++ kdegraphics-2.2.2/kamera/pics/CVS/Entries
+@@ -1,8 +1,8 @@
+-/Makefile.am/1.1.2.1/Sat Sep 29 02:23:17 2001//TKDE_2_2_BRANCH
+-/hi16-action-camera_test.png/1.1.2.1/Sat Sep 29 02:23:17 2001//TKDE_2_2_BRANCH
+-/hi16-app-camera.png/1.1.2.1/Sat Sep 29 02:23:17 2001//TKDE_2_2_BRANCH
+-/hi16-device-camera.png/1.1.2.1/Sat Sep 29 02:23:17 2001//TKDE_2_2_BRANCH
+-/hi32-device-camera.png/1.1.2.1/Sat Sep 29 02:23:17 2001//TKDE_2_2_BRANCH
+-/hi32-filesys-camera.png/1.1.2.1/Sat Sep 29 02:23:17 2001//TKDE_2_2_BRANCH
+-/.cvsignore/1.1.2.1/Mon Oct 29 06:21:09 2001//TKDE_2_2_BRANCH
++/.cvsignore/1.1/Sun Oct  7 01:06:29 2001//
++/Makefile.am/1.2/Sun Oct  7 01:06:29 2001//
++/hi16-action-camera_test.png/1.2/Sun Oct  7 01:06:29 2001//
++/hi16-app-camera.png/1.2/Sun Oct  7 01:06:29 2001//
++/hi16-device-camera.png/1.2/Sun Oct  7 01:06:29 2001//
++/hi32-device-camera.png/1.2/Sun Oct  7 01:06:29 2001//
++/hi32-filesys-camera.png/1.2/Sun Oct  7 01:06:29 2001//
+ D
+--- kdegraphics-2.2.2.orig/kcoloredit/kcolorchooser.desktop
++++ kdegraphics-2.2.2/kcoloredit/kcolorchooser.desktop
+@@ -6,7 +6,7 @@
+ Path=
+ Terminal=0
+ BinaryPattern=kcolorchooser
+-DocPath=kcolorchooser/kcolorchooser.html
++DocPath=
+ Comment=Stand alone KDE color chooser
+ Comment[az]=KDE rəng seçicisi
+ Comment[bg]=Програма за избор на цвят в KDE
+--- kdegraphics-2.2.2.orig/kcoloredit/kcoloredit.desktop
++++ kdegraphics-2.2.2/kcoloredit/kcoloredit.desktop
+@@ -6,7 +6,7 @@
+ Path=
+ Terminal=0
+ BinaryPattern=kcoloredit
+-DocPath=kcoloredit/kcoloredit.html
++DocPath=
+ Comment=An editor for palette files
+ Comment[az]=Rəng paleti faylları üçün bir editor
+ Comment[bg]=Редактор на файлове за палитри
+--- kdegraphics-2.2.2.orig/kooka/kooka.desktop
++++ kdegraphics-2.2.2/kooka/kooka.desktop
+@@ -6,7 +6,7 @@
+ Path=
+ Terminal=0
+ BinaryPattern=kooka
+-DocPath=kooka/kooka.html
++DocPath=
+ Comment=A scan program
+ Comment[az]=Bir səyyah proqramı
+ Comment[bg]=Програма за сканироване
+--- kdegraphics-2.2.2.orig/admin/acinclude.m4.in
++++ kdegraphics-2.2.2/admin/acinclude.m4.in
+@@ -376,7 +376,7 @@
+ if test "$1" = "default"; then
+ 
+   if test -z "$kde_htmldir"; then
+-    kde_htmldir='\${prefix}/share/doc/HTML'
++    kde_htmldir='\${prefix}/share/doc/kde/HTML'
+   fi
+   if test -z "$kde_appsdir"; then
+     kde_appsdir='\${prefix}/share/applnk'
+--- kdegraphics-2.2.2.orig/admin/debianrules
++++ kdegraphics-2.2.2/admin/debianrules
+@@ -10,9 +10,9 @@
+ 
+ if (@ARGV && $ARGV[0] eq 'cleanup') {
+ 
+-if (-d "debian/tmp/usr/share/kde2/config") {
++if (-d "debian/tmp/usr/share/config") {
+ 	if (! -d "debian/tmp/$kde_confdir") {
+-	  system("mv debian/tmp/usr/share/kde2/config debian/tmp/$kde_confdir");
++	  system("mv debian/tmp/usr/share/config debian/tmp/$kde_confdir");
+ 	}
+ }
+ system("rm -f `find debian/ -name \".anchors\"`");
+@@ -76,9 +76,9 @@
+   print STDOUT "export KDB2HTML=$KDB2HTML\n";
+   print STDOUT "export MCOPIDL=$MCOPIDL\n";
+   print STDOUT "export ARTSCCONFIG=$ARTSCCONFIG\n";
+-  print STDOUT "configkde=--disable-debug --disable-rpath --prefix=\$(kde_prefix) --libexecdir=\$(kde_bindir) --with-qt-includes=/usr/include/qt --mandir=\$(mandir) --infodir=\$(infodir)\n";
++  print STDOUT "configkde=--disable-debug --disable-rpath --prefix=\$(kde_prefix) --libexecdir=\$(kde_bindir) --libdir=\$(kde_libdir) --includedir=\$(kde_includedir) --with-qt-includes=/usr/include/qt --mandir=\$(mandir) --infodir=\$(infodir)\n";
+   print STDOUT "configkdevelop=--disable-debug --enable-docbase --enable-kdoc2 --disable-rpath --libdir=\$(kde_libdir) --includedir=\$(kde_includedir) --with-qt-includes=/usr/include/qt --mandir=\$(mandir) --with-kdelibsdoc-dir=/usr/share/doc/kdelibs3-doc/html\n";
+-  print STDOUT "configkdepim=--disable-debug --with-extra-includes=/usr/include/libpisock --enable-shared --disable-rpath --prefix=\$(kde_prefix) --libexecdir=\$(kde_bindir) --with-qt-includes=/usr/include/qt --mandir=\$(mandir) --infodir=\$(infodir)\n";
++  print STDOUT "configkdepim=--disable-debug --with-extra-includes=/usr/include/libpisock --enable-shared --disable-rpath --libdir=\$(kde_libdir) --includedir=\$(kde_includedir) --prefix=\$(kde_prefix) --libexecdir=\$(kde_bindir) --with-qt-includes=/usr/include/qt --mandir=\$(mandir) --infodir=\$(infodir)\n";
+   exit
+ }
+ 

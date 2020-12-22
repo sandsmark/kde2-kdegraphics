@@ -1,0 +1,94 @@
+[Paper]
+Count=24
+[Paper 1]
+Name=A1
+Width=59.4
+Height=84.0
+[Paper 2]
+Name=A2
+Width=42.0
+Height=59.4
+[Paper 3]
+Name=A3
+Width=29.7
+Height=42.0
+[Paper 4]
+Name=A4
+Width=21.0
+Height=29.7
+[Paper 5]
+Name=A5
+Width=14.85
+Height=21.0
+[Paper 6]
+Name=A6
+Width=10.5
+Height=14.85
+[Paper 7]
+Name=A7
+Width=7.42
+Height=10.5
+[Paper 8]
+Name=B1
+Width=70.6
+Height=100.0
+[Paper 9]
+Name=B2
+Width=50.0
+Height=70.6
+[Paper 10]
+Name=B3
+Width=35.3
+Height=50.0
+[Paper 11]
+Name=B4
+Width=25.0
+Height=35.3
+[Paper 12]
+Name=B5
+Width=17.6
+Height=25.0
+[Paper 13]
+Name=B6
+Width=13.5
+Height=17.6
+[Paper 14]
+Name=B7
+Width=8.8
+Height=13.5
+[Paper 15]
+Name=C1
+Width=64.8
+Height=91.6
+[Paper 16]
+Name=C2
+Width=45.8
+Height=64.8
+[Paper 17]
+Name=C3
+Width=32.4
+Height=45.8
+[Paper 18]
+Name=C4
+Width=22.9
+Height=32.4
+[Paper 19]
+Name=C5
+Width=16.2
+Height=22.9
+[Paper 20]
+Name=C6
+Width=11.46
+Height=16.2
+[Paper 21]
+Name=C7
+Width=8.1
+Height=11.46
+[Paper 22]
+Name=Letter
+Width=21.59
+Height=27.94
+[Paper 23]
+Name=Legal
+Width=21.59
+Height=35.56

@@ -1,0 +1,124 @@
+Source: kdegraphics
+Build-Depends: automake (>= 1:1.4-p4-1.1), autoconf, libtool, debhelper (>> 3.0.0), kdelibs-dev (>= 4:2.2.2-1), tetex-bin, libkpathsea-dev, libsane-dev [!hppa], gphoto2-dev (>= 2.0final-1), libusb-dev [!hppa], libgpio-dev (>= 0.0.2.0cvs20010927-1), libexif-dev, docbook-to-man
+Section: graphics
+Priority: optional
+Maintainer: Christopher L Cheney <ccheney@debian.org>
+Standards-Version: 3.5.6
+
+Package: kfract
+Architecture: any
+Section: graphics
+Replaces: kdegraphics, kview (<<4:2.2.2-5)
+Depends: ${shlibs:Depends}
+Recommends: kdebase-libs
+Description: fractal generator for KDE
+ Kfract is a generator for fractals. Well, at this early stage it's only 
+ capable of Mandelbrot sets and Julia sets. Nothing fancy like Xfractint. 
+ And it's way far from being as fast as Xfractint. But it's much easier to use.
+
+Package: kruler
+Architecture: any
+Section: graphics
+Replaces: kdegraphics, kfract (<= 4:2.1-20010101-1)
+Depends: ${shlibs:Depends}
+Recommends: kdebase-libs
+Description: a screen ruler and color measurement tool for KDE
+ Kruler is a screen ruler and color measurement tool for KDE.
+
+Package: kcoloredit
+Architecture: any
+Section: graphics
+Depends: ${shlibs:Depends}
+Recommends: kdebase-libs
+Description: An editor for palette files
+ This is a color palette editor for KDE.
+
+Package: kpaint
+Architecture: any
+Section: graphics
+Replaces: kdegraphics, kfract (<= 4:2.1-20010101-1)
+Depends: ${shlibs:Depends}
+Recommends: kdebase-libs
+Description: A Simple Paint Program for KDE
+ KPaint is a very simple paint program for KDE.
+
+Package: kiconedit
+Architecture: any
+Section: graphics
+Replaces: kdegraphics, kfract (<= 4:2.1-20010101-1)
+Depends: ${shlibs:Depends}
+Recommends: kdebase-libs
+Description: An icon editor for creating KDE icons
+ KIconedit is an icon editor for creating KDE and other icons
+
+Package: kghostview
+Architecture: any
+Section: graphics
+Replaces: kdegraphics
+Depends: ${shlibs:Depends}, gs
+Recommends: kdebase-libs
+Suggests: gv
+Provides: postscript-viewer, pdf-viewer
+Description: PostScript viewer for KDE.
+ KGhostview is the PostScript viewer for the K Desktop Environment. It is a 
+ port of Tim Theisen's Ghostview program which is used to view documents 
+ prepared in Adobe's PostScript page description language. PostScript is the 
+ major page description language for printing on UNIX systems and this 
+ application is used to preview material intended for printing or for reading 
+ documents online.
+
+Package: ksnapshot
+Architecture: any
+Section: graphics
+Replaces: kdegraphics
+Depends: ${shlibs:Depends}
+Recommends: kdebase-libs
+Description: Screenshot application for KDE
+ KSnapshot is a simple applet for taking screenshots. It is capable of 
+ capturing images of either the whole desktop or just a single window. 
+ The images can then be saved in a variety of formats.
+
+Package: kview
+Architecture: any
+Section: graphics
+Replaces: kdegraphics
+Depends: ${shlibs:Depends}
+Recommends: kdebase-libs
+Description: A simple image viewer/converter for KDE.
+ KView is a simple image viewer/converter application. This package contains
+ kview, kdvi and kfax.
+
+Package: kamera
+Architecture: any
+Section: graphics
+Depends: ${shlibs:Depends}
+Recommends: kdebase-libs
+Description: digital camera io_slave for Konqueror
+ This is a digital camera io_slave for KDE which uses gphoto2 and libgpio
+ to allow access to your camera's pictures with the URL kamera:/
+
+Package: libkscan1
+Architecture: alpha arm i386 ia64 m68k mips mipsel powerpc s390 sh sheb sparc sparc64
+Section: libs
+Depends: ${shlibs:Depends}
+Description: Scanner library for KDE
+ KScan is KDE's Scanner Library. It's used by kooka and by koffice currently.
+ It provides an easy-to-use library, which allows you to access your scanner
+ (camera - as long as it's sane compatible).
+
+Package: libkscan-dev
+Architecture: alpha arm i386 ia64 m68k mips mipsel powerpc s390 sh sheb sparc sparc64
+Section: devel
+Depends: libkscan1 (= ${Source-Version}), libc6-dev, gettext, kdelibs-dev
+Description: Scanner library for KDE (development files)
+ This package contains development files for KDE's Scanner Library.
+
+Package: kooka
+Architecture: alpha arm i386 ia64 m68k mips mipsel powerpc s390 sh sheb sparc sparc64
+Section: graphics
+Depends: ${shlibs:Depends}, debconf
+Description: Scanner program for KDE2
+ Kooka is a scanner program based on SANE and KScan library.
+ .
+ ***WARNING*** Please read the WARNING file first 
+ in /usr/share/doc/kooka

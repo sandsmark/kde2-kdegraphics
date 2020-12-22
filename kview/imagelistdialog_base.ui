@@ -1,0 +1,277 @@
+<!DOCTYPE UI><UI>
+<class>ImageListDialog_Base</class>
+<author>Matthias Kretz</author>
+<include location="global">klistbox.h</include>
+<widget>
+    <class>QWidget</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>ImageListDialog_Base</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>535</width>
+            <height>326</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>KView: Image List</string>
+    </property>
+    <hbox>
+        <property stdset="1">
+            <name>margin</name>
+            <number>11</number>
+        </property>
+        <property stdset="1">
+            <name>spacing</name>
+            <number>6</number>
+        </property>
+        <widget>
+            <class>KListBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>m_imageListBox</cstring>
+            </property>
+            <property stdset="1">
+                <name>sizePolicy</name>
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>5</vsizetype>
+                </sizepolicy>
+            </property>
+        </widget>
+        <widget>
+            <class>QLayoutWidget</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Layout2</cstring>
+            </property>
+            <vbox>
+                <property stdset="1">
+                    <name>margin</name>
+                    <number>0</number>
+                </property>
+                <property stdset="1">
+                    <name>spacing</name>
+                    <number>6</number>
+                </property>
+                <widget>
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>m_previous</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Previous</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>m_shuffle</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Shu&amp;ffle</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>m_sort</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>S&amp;ort</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>m_next</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Next</string>
+                    </property>
+                </widget>
+                <spacer>
+                    <property>
+                        <name>name</name>
+                        <cstring>Spacer1</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>orientation</name>
+                        <enum>Vertical</enum>
+                    </property>
+                    <property stdset="1">
+                        <name>sizeType</name>
+                        <enum>Expanding</enum>
+                    </property>
+                    <property>
+                        <name>sizeHint</name>
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget>
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>m_slideshow</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Start &amp;Slideshow</string>
+                    </property>
+                    <property stdset="1">
+                        <name>toggleButton</name>
+                        <bool>true</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>toggleButton</name>
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <spacer>
+                    <property>
+                        <name>name</name>
+                        <cstring>Spacer3</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>orientation</name>
+                        <enum>Vertical</enum>
+                    </property>
+                    <property stdset="1">
+                        <name>sizeType</name>
+                        <enum>Expanding</enum>
+                    </property>
+                    <property>
+                        <name>sizeHint</name>
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget>
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>m_saveList</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Sa&amp;ve List</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>m_loadList</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Load List</string>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
+    </hbox>
+</widget>
+<customwidgets>
+    <customwidget>
+        <class>KListBox</class>
+        <header location="global">klistbox.h</header>
+        <sizehint>
+            <width>96</width>
+            <height>40</height>
+        </sizehint>
+        <container>0</container>
+        <sizepolicy>
+            <hordata>7</hordata>
+            <verdata>7</verdata>
+        </sizepolicy>
+        <pixmap>image0</pixmap>
+        <signal>executed( QListBoxItem* )</signal>
+        <signal>executed( QListBoxItem*, const QPoint&amp; )</signal>
+        <signal>doubleClicked( QListBoxItem*, const QPoint&amp; )</signal>
+        <signal>highlighted( int )</signal>
+    </customwidget>
+</customwidgets>
+<images>
+    <image>
+        <name>image0</name>
+        <data format="XPM.GZ" length="1202">789c65d25d6fa2401406e07b7f05d13bb3b105b44a367b51e9876dd3cd5e6eb2d98b61f81218a1a8a86dfadf3bef1966447a8e1a1fde99e3a05e8dadbf7f5eadf1d560bb63bb35b778ca6a6b1cee8538fdfbffeb6330741c4b3e5ccfb2873f06c389c5addfe526c2fb8d7c3fbaa602ef151d2f9e8319718106ef145d5ba5b78631c841fb1a0dfa8a7af1b2a5a7163f1317b2697165481ff4a83875d4dec490f6e6a063a3c194e8a1c11745d776290d41407167488bdf1567ede480e8a1c107c51953c77802a78e4c69d449111740a63975c01591e9b469c9148f9a6af1c890810770e6e8740fde04b25db0360cc02d3877d1a000173334f846e46830023d8e06d76078830663309aa3c1128ce768b02052d1bf68c458c0fb455f79145f164f928492348a03b9adad70bde63ce13ae9ede14996d1b46f9f216b42ff83b4e896d888b214b42717054bc3b6727951146d5289e2added654dbba145c306692b253a2ea26a334dc9969dda4dc37075947f93c2191c7d0496f9a4ee4d9de6f974b7fe9dff9fe7d2f79f01fdbf2bb49faed6c9d64bf3a1c9b55d334c7a7523c9be4459e3a4fdbaa70a73a097bd3ce4920efa73bed9c30515e4cdb9c137e79a7999045c9244cf3bcc2cf95514de865f8f973f005ab6352a6</data>
+    </image>
+</images>
+<connections>
+    <connection>
+        <sender>m_previous</sender>
+        <signal>clicked()</signal>
+        <receiver>ImageListDialog_Base</receiver>
+        <slot>slot_previous()</slot>
+    </connection>
+    <connection>
+        <sender>m_shuffle</sender>
+        <signal>clicked()</signal>
+        <receiver>ImageListDialog_Base</receiver>
+        <slot>slot_shuffle()</slot>
+    </connection>
+    <connection>
+        <sender>m_sort</sender>
+        <signal>clicked()</signal>
+        <receiver>ImageListDialog_Base</receiver>
+        <slot>slot_sort()</slot>
+    </connection>
+    <connection>
+        <sender>m_next</sender>
+        <signal>clicked()</signal>
+        <receiver>ImageListDialog_Base</receiver>
+        <slot>slot_next()</slot>
+    </connection>
+    <connection>
+        <sender>m_slideshow</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>ImageListDialog_Base</receiver>
+        <slot>slot_slideshow( bool )</slot>
+    </connection>
+    <connection>
+        <sender>m_saveList</sender>
+        <signal>clicked()</signal>
+        <receiver>ImageListDialog_Base</receiver>
+        <slot>slot_save()</slot>
+    </connection>
+    <connection>
+        <sender>m_loadList</sender>
+        <signal>clicked()</signal>
+        <receiver>ImageListDialog_Base</receiver>
+        <slot>slot_load()</slot>
+    </connection>
+    <connection>
+        <sender>m_imageListBox</sender>
+        <signal>executed( QListBoxItem* )</signal>
+        <receiver>ImageListDialog_Base</receiver>
+        <slot>slot_select( QListBoxItem* )</slot>
+    </connection>
+    <slot access="public">slot_load()</slot>
+    <slot access="public">slot_next()</slot>
+    <slot access="public">slot_previous()</slot>
+    <slot access="public">slot_save()</slot>
+    <slot access="protected">slot_select( QListBoxItem* )</slot>
+    <slot access="public">slot_shuffle()</slot>
+    <slot access="public">slot_slideshow( bool )</slot>
+    <slot access="public">slot_sort()</slot>
+</connections>
+</UI>

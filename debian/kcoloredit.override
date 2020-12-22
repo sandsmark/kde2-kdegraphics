@@ -1,0 +1,2 @@
+kcoloredit: no-shlibs-control-file usr/lib/kcolorchooser.so
+kcoloredit: postinst-must-call-ldconfig usr/lib/kcolorchooser.so

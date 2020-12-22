@@ -1,0 +1,8 @@
+kview: non-dev-pkg-with-shlib-symlink usr/lib/libkmultipage.so.0.0.0 usr/lib/libkmultipage.so
+kview: shlib-missing-in-control-file libkpagetest.so usr/lib/libkpagetest.so
+kview: shlib-missing-in-control-file libkviewpart.so usr/lib/libkviewpart.so
+kview: shlib-missing-in-control-file libkfax.so usr/lib/libkfax.so
+kview: shlib-missing-in-control-file libkdvi.so usr/lib/libkdvi.so
+kview: shlib-missing-in-control-file libkviewerpart.so usr/lib/libkviewerpart.so
+kview: shlib-missing-in-control-file kview.so usr/lib/kview.so
+

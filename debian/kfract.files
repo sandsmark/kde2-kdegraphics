@@ -1,0 +1,9 @@
+usr/bin/kfract
+usr/share/apps/kfract/*
+usr/share/icons/hicolor/*/actions/palette_color.png
+usr/share/icons/hicolor/*/actions/palette_gray.png
+usr/share/icons/hicolor/*/actions/palette_halftone.png
+usr/share/icons/hicolor/*/actions/palette_lineart.png
+usr/share/icons/hicolor/*/apps/kfract.png
+usr/share/doc/kde/HTML/en/kfract/*
+usr/share/applnk/Graphics/kfract.desktop

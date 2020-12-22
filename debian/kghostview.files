@@ -1,0 +1,9 @@
+usr/lib/libkghostview.*
+usr/bin/kghostview
+usr/share/man/man1/kghostview*
+usr/share/icons/*/*/apps/kghostview.*
+usr/share/applnk/Graphics/kghostview.desktop
+usr/share/apps/kghostview/*
+usr/share/doc/kdegraphics/kghostview/*
+usr/share/doc/kde/HTML/en/kghostview/*
+usr/share/lintian/overrides/kghostview

@@ -1,0 +1,9 @@
+usr/lib/kcolorchooser.so
+usr/lib/kcolorchooser.la
+usr/bin/kcoloredit
+usr/bin/kcolorchooser
+usr/share/icons/*/*/apps/kcoloredit.*
+usr/share/applnk/Graphics/kcoloredit.desktop
+usr/share/applnk/Graphics/kcolorchooser.desktop
+usr/share/doc/kde/HTML/en/kcoloredit/*
+usr/share/lintian/overrides/kcoloredit

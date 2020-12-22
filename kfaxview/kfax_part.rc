@@ -1,0 +1,8 @@
+<!DOCTYPE kpartgui>
+<kpartgui name="kfax_part" version="1">
+<MenuBar>
+ <Menu name="settings"><text>&amp;Settings</text>
+  <Action name="settings_anti"/>
+ </Menu>
+</MenuBar>
+</kpartgui>

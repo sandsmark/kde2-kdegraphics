@@ -1,0 +1,8 @@
+?package(kiconedit):\
+	needs=x11\
+	section=Apps/Graphics\
+	hints="KDE"\
+	kderemove="y"\
+	title="KIconedit"\
+	command=/usr/bin/kiconedit
+

@@ -1,0 +1,611 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.1-Based Variant V1.0//EN"
+  "dtd/kdex.dtd" [
+  <!ENTITY kappname "&kpaint;">
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % English "INCLUDE"><!-- change language only here -->
+]>
+
+
+<book lang="&language;">
+
+<bookinfo>
+<title>The &kpaint; Handbook</title>
+<authorgroup>
+<author>
+<firstname>Pamela</firstname>
+<surname>Roberts</surname>
+<affiliation>
+<address><email>pam.roberts@btinternet.com</email></address>
+</affiliation>
+</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS --> 
+</authorgroup>
+
+<copyright>
+<year>2001</year>
+<holder>Pamela Roberts</holder>
+</copyright>
+<!-- Translators: put here the copyright notice of the translation -->
+
+<legalnotice>&FDLNotice;</legalnotice>
+
+
+<date>2001-07-27</date>
+<releaseinfo>0.05.01</releaseinfo>
+
+<abstract>
+<para>This document describes &kpaint; version 0.5.1</para>
+</abstract>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>linux</keyword>
+<keyword>drawing</keyword>
+<keyword>paint</keyword>
+</keywordset>
+
+</bookinfo>
+
+<chapter id="intro">
+<title>Introduction</title>
+
+<para>&kpaint; is a simple bitmap drawing program that can also be used to
+modify existing image files and convert between image file formats.</para>
+
+</chapter>
+
+
+<chapter id="using">
+<title>Using &kpaint;</title>
+
+<para>When you start &kpaint; you will be presented with a <guilabel>New Canvas
+Size</guilabel> dialog box. Use this to define the picture size in pixels
+if you are starting a new drawing. If you are going to edit an existing
+image, either accept the default size or press the
+<guilabel>Cancel</guilabel> button.</para>
+
+<para>An existing image file can be loaded with the
+<menuchoice><guimenu>File</guimenu><guimenuitem>Open</guimenuitem></menuchoice>
+option.</para>
+
+<para>Drawing lines or shapes is done by selecting the type of line or shape
+that you want from the Toolbar icons or the
+<guimenu>Tools</guimenu> menu and using the &LMB; or &RMB; to do the
+drawing. The colors used by the left and right mouse buttons can be
+changed by left clicking on the small pads shown in the right hand
+Toolbar menu (the one showing a small version of the drawing).</para>
+
+<para>The thickness and style of lines and how shapes are filled can be adjusted
+with the <menuchoice><guimenu>Tools</guimenu><guimenuitem>Tool
+properties...</guimenuitem></menuchoice> option.</para>
+
+<para>To save your drawing use the
+<menuchoice><guimenu>File</guimenu><guimenuitem>Save</guimenuitem></menuchoice> or
+<menuchoice><guimenu>File</guimenu><guimenuitem>Save
+As...</guimenuitem></menuchoice> options, giving the file name a .bmp, .gif,
+.jpg, .xpm, .xbm or .pnm extension to define the format in which you want it to
+be saved.</para>
+
+<para>You can select part of the image by choosing the <guilabel>Area
+Select</guilabel> tool and defining the area by dragging the mouse
+with the &LMB; held down. Once you have done this, you can
+<guimenuitem>Copy</guimenuitem> the area and
+<guimenuitem>Paste</guimenuitem> it anywhere else. Or you create a new
+image containing only the copied area by choosing
+<menuchoice><guimenu>Edit</guimenu><guimenuitem>Paste
+image</guimenuitem></menuchoice>.</para> </chapter>
+
+<chapter id="menubar">
+<title>The Menubar</title>
+
+<sect1 id="filemenu">
+<title>The <guimenu>File</guimenu> Menu</title>
+<para>
+
+<variablelist>
+
+<varlistentry>
+<term><menuchoice>
+<shortcut><keycombo action="simul"><keycap>Ctrl</keycap>
+<keycap>N</keycap></keycombo></shortcut>
+<guimenu><accel>F</accel>ile</guimenu>
+<guimenuitem><accel>N</accel>ew</guimenuitem>
+</menuchoice></term>
+<listitem><para>Start a <action>new drawing</action>. If a drawing
+is currently being displayed, a new instance of &kpaint; will be opened
+to show the new drawing.</para> </listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<shortcut><keycombo action="simul"><keycap>Ctrl</keycap>
+<keycap>O</keycap></keycombo></shortcut>
+<guimenu><accel>F</accel>ile</guimenu>
+<guimenuitem><accel>O</accel>pen...</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Open</action> an image file.
+If a drawing is currently being displayed, another instance of &kpaint; will be
+opened to show the new one.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<shortcut><keycombo action="simul"><keycap>Ctrl</keycap>
+<keycap>S</keycap></keycombo></shortcut>
+<guimenu><accel>F</accel>ile</guimenu>
+<guimenuitem><accel>S</accel>ave</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Save</action> a modified drawing without changing its
+name. If the drawing has not been previously saved, &kpaint; will prompt you
+for a name. You must give the file name a .bmp, .gif, .jpg, .xpm, .xbm or
+.pnm extension to define the format in which you want it to be
+saved.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>F</accel>ile</guimenu>
+<guimenuitem>Save <accel>A</accel>s...</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Save</action> a drawing with a new file name.
+You must give the file name a .bmp, .gif, .jpg, .xpm, .xbm or
+.pnm extension to define the format in which you want it to be
+saved.</para></listitem> </varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>F</accel>ile</guimenu>
+<guimenuitem>Re<accel>v</accel>ert</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Cancel</action> any changes you may
+have made.</para></listitem> </varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<shortcut><keycombo action="simul"><keycap>Ctrl</keycap>
+<keycap>W</keycap></keycombo></shortcut>
+<guimenu><accel>F</accel>ile</guimenu>
+<guimenuitem><accel>C</accel>lose</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Close</action> the current drawing without
+quitting &kpaint;.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<shortcut><keycombo action="simul"><keycap>Ctrl</keycap>
+<keycap>Q</keycap></keycombo></shortcut>
+<guimenu><accel>F</accel>ile</guimenu>
+<guimenuitem><accel>Q</accel>uit</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Quit</action> &kpaint;.</para> </listitem>
+</varlistentry>
+
+
+</variablelist>
+</para>
+</sect1>
+
+<sect1 id="editmenu">
+<title>The <guimenu>Edit</guimenu> Menu</title>
+
+<para><variablelist>
+
+<varlistentry>
+<term><menuchoice>
+<shortcut><keycombo action="simul"><keycap>Ctrl</keycap>
+<keycap>X</keycap></keycombo></shortcut>
+<guimenu><accel>E</accel>dit</guimenu>
+<guimenuitem>C<accel>u</accel>t</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Delete</action> the area you have selected with the
+<guimenuitem>Area Select</guimenuitem> option.</para> </listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<shortcut><keycombo action="simul"><keycap>Ctrl</keycap>
+<keycap>C</keycap></keycombo></shortcut>
+<guimenu><accel>E</accel>dit</guimenu>
+<guimenuitem><accel>C</accel>opy</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Copy</action> the area you have selected with the
+<guimenuitem>Area Select</guimenuitem> option.</para> </listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<shortcut><keycombo action="simul"><keycap>Ctrl</keycap>
+<keycap>V</keycap></keycombo></shortcut>
+<guimenu><accel>E</accel>dit</guimenu>
+<guimenuitem><accel>P</accel>aste</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Paste</action> the area you have just cut or
+copied into the drawing.</para> </listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>E</accel>dit</guimenu>
+<guimenuitem>Paste <accel>i</accel>mage</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Create a new drawing in a new &kpaint; window</action>
+containing the area you have just cut or copied.</para> </listitem>
+</varlistentry>
+
+</variablelist></para>
+</sect1>
+
+
+
+<sect1 id="viewmenu">
+<title>The <guimenu>View</guimenu> Menu</title>
+
+<para><variablelist>
+
+<varlistentry>
+<term><menuchoice>
+<shortcut><keycombo action="simul"><keycap>Ctrl</keycap>
+<keycap>Shift</keycap><keycap>+</keycap></keycombo></shortcut>
+<guimenu><accel>V</accel>iew</guimenu>
+<guimenuitem>Zoom <accel>I</accel>n</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Zoom</action> in.</para> </listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<shortcut><keycombo action="simul"><keycap>Ctrl</keycap>
+<keycap>-</keycap></keycombo></shortcut>
+<guimenu><accel>V</accel>iew</guimenu>
+<guimenuitem>Zoom <accel>O</accel>ut</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Zoom</action> out.</para> </listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>V</accel>iew</guimenu>
+<guimenuitem>Zoom</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Zoom</action> in or out according to the
+magnification value selected from a drop-down list.</para> </listitem>
+</varlistentry>
+
+</variablelist>
+</para>
+</sect1>
+
+<sect1 id="toolsmenu">
+<title>The <guimenu>Tools</guimenu> Menu</title>
+<para><variablelist>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>T</accel>ools</guimenu>
+<guimenuitem><accel>T</accel>ool properties..</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Open a dialog box that lets you select line width and
+style.</action></para> </listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>T</accel>ools</guimenu>
+<guimenuitem>Ellipse</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Draw an ellipse.</action></para> </listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>T</accel>ools</guimenu>
+<guimenuitem>Circle</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Draw a circle.</action></para> </listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>T</accel>ools</guimenu>
+<guimenuitem>Pen</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Use the cursor like a pen for freehand
+drawing.</action></para> </listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>T</accel>ools</guimenu>
+<guimenuitem>Line</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Draw a straight line.</action></para> </listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>T</accel>ools</guimenu>
+<guimenuitem>Rectangle</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Draw a rectangle.</action></para> </listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>T</accel>ools</guimenu>
+<guimenuitem>Round Angle</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Draw a rectangle with rounded corners.</action></para>
+</listitem> </varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>T</accel>ools</guimenu>
+<guimenuitem>Spray Can</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Use the spray can.</action></para>
+</listitem> </varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>T</accel>ools</guimenu>
+<guimenuitem>Text</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Insert text where you click the &LMB;.</action></para>
+</listitem> </varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>T</accel>ools</guimenu>
+<guimenuitem>Area Select</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Select an area for a Cut or Copy
+operation.</action></para> </listitem> </varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>T</accel>ools</guimenu>
+<guimenuitem>Paste</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Paste a previously Cut or Copied area
+to where you next click the &LMB;.</action></para> </listitem> 
+</varlistentry>
+
+</variablelist>
+</para>
+</sect1>
+
+
+<sect1 id="imagemenu">
+<title>The <guimenu>Image</guimenu> Menu</title>
+
+<para>
+<variablelist>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>I</accel>mage</guimenu>
+<guimenuitem><accel>I</accel>nformation...</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Gives you some information about the
+drawing</action>.</para> </listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>I</accel>mage</guimenu>
+<guimenuitem><accel>R</accel>esize...</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Lets you change the size of the drawing</action>.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>I</accel>mage</guimenu>
+<guimenuitem><accel>E</accel>dit palette...</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Lets you change the color palette, but
+only for certain image formats</action>.</para> </listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>I</accel>mage</guimenu>
+<guimenuitem><accel>C</accel>hange color depth...</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Lets you change the color depth (number of bits per
+pixel), but only for certain image formats</action>.</para> </listitem>
+</varlistentry>
+
+</variablelist>
+</para>
+</sect1>
+
+<sect1 id="settings">
+<title>The <guimenu>Settings</guimenu> Menu</title>
+<para><variablelist>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>S</accel>ettings</guimenu>
+<guimenuitem>Show <accel>T</accel>oolbar</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Toggle the Main Toolbar display</action> on
+and off.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>S</accel>ettings</guimenu>
+<guimenuitem>Show St<accel>a</accel>tusbar</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Toggle the Statusbar display</action> on
+and off.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>S</accel>ettings</guimenu>
+<guimenuitem><accel>S</accel>ave Settings</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Save the Toolbar and Statusbar
+settings</action>.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>S</accel>ettings</guimenu>
+<guimenuitem>Configure Tool<accel>b</accel>ars...</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Configure the Main and Tools
+toolbars</action>.</para></listitem>
+</varlistentry>
+
+
+</variablelist>
+</para>
+</sect1>
+
+
+<sect1 id="help">
+<title>The <guimenu>Help</guimenu> Menu</title>
+
+<para><variablelist>
+
+<varlistentry>
+<term><menuchoice>
+<shortcut><keycap>F1</keycap>
+</shortcut>
+<guimenu><accel>H</accel>elp</guimenu>
+<guimenuitem><accel>C</accel>ontents</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>View this manual</action>.</para> </listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>H</accel>elp</guimenu>
+<guimenuitem><accel>R</accel>eport bug...</guimenuitem>
+</menuchoice></term>
+<listitem><para>Use this to <action>report any bugs you may
+find with &kpaint;</action>.</para> </listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>H</accel>elp</guimenu>
+<guimenuitem><accel>A</accel>bout &kpaint;</guimenuitem>
+</menuchoice></term>
+<listitem><para>Use this to <action>see the version number of
+&kpaint; as well as brief information about the program
+authors, copyright and license agreement</action>.</para> </listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu><accel>H</accel>elp</guimenu>
+<guimenuitem>About <accel>K</accel>DE</guimenuitem>
+</menuchoice></term>
+<listitem><para>To view <action>brief information about the K Desktop
+Environment</action>.</para> </listitem>
+</varlistentry>
+
+</variablelist>
+</para>
+</sect1>
+</chapter>
+
+<chapter id="credits">
+
+
+<title>Credits and License</title>
+
+<para>
+&kpaint;
+</para>
+<para>
+Program copyright 1996-2001:
+<itemizedlist>
+<listitem><para>Richard J. Moore <email>rich@kde.org</email> (maintainer)
+</para></listitem>
+<listitem><para>Robert Williams <email>rwilliams@jrcmaui.com</email>
+</para></listitem>
+<listitem><para>Mario Weilguni <email>mweilguni@kde.org</email>
+</para></listitem>
+<listitem><para>Christian Oppel <email>uzs84g@uni-bonn.de</email>
+</para></listitem>
+<listitem><para>John Califf <email>jcaliff@compuzone.net</email>
+</para></listitem>
+<listitem><para>Laurent Montel <email>lmontel@mandrakesoft.com</email>
+</para></listitem>
+</itemizedlist>
+</para>
+
+<para>
+Documentation copyright 2001 Pamela Roberts
+<email>pam.roberts@btinternet.com</email>
+</para>
+
+<!-- TRANS:CREDIT_FOR_TRANSLATORS -->
+
+&underFDL;               <!-- FDL: do not remove -->
+
+<!-- Determine which license your application is licensed under, 
+     and delete all the remaining licenses below:
+
+     (NOTE:  All documentation are licensed under the FDL, 
+     regardless of what license the application uses) -->
+
+&underGPL;        	 <!-- GPL License -->
+
+</chapter>
+
+
+<appendix id="installation">
+<title>Installation</title>
+
+<para>
+&kpaint; is part of the &kde; 2 project, details of which can be found at
+<ulink url="http://www.kde.org"> http://www.kde.org</ulink>.
+</para>
+
+<para>
+Most distributions will include &kpaint;, but if you want to roll your own
+the source code can be found in the Kdegraphics package on <ulink
+url="ftp://ftp.kde.org/pub/kde/">ftp://ftp.kde.org/pub/kde/</ulink>, the main
+ftp site of the KDE project. </para>
+
+<para>
+To see if a later version of &kpaint; has been released, you can take a
+look in <ulink
+url="http://apps.kde.com">http://apps.kde.com</ulink>. </para>
+
+<para>
+To compile and install &kpaint; on your system, as root type the
+following in the directory where you saved the &kpaint; source code:
+<screen width="40">
+<prompt>%</prompt> <userinput>./configure</userinput>
+<prompt>%</prompt> <userinput>make</userinput>
+<prompt>%</prompt> <userinput>make install</userinput>
+</screen>
+</para>
+
+<para>Since &kpaint; uses autoconf and automake you should not have any
+trouble compiling it. But if you do run into problems please report them to the
+&kde; mailing lists.</para>
+
+</appendix>
+
+&documentation.index;
+
+</book>
+<!--
+Local Variables:
+mode: sgml
+sgml-omittag: nil
+sgml-shorttag: t
+End:
+-->
+

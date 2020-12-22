@@ -1,0 +1,8 @@
+?package(ksnapshot):\
+	needs=x11\
+	section=Apps/Graphics\
+	hints="KDE"\
+	kderemove="y"\
+	title="KSnapshot"\
+	command=/usr/bin/ksnapshot
+

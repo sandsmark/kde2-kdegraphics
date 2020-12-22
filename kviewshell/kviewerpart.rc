@@ -1,0 +1,55 @@
+<!DOCTYPE kpartgui>
+<kpartgui name="KViewPart" version="1">
+<MenuBar>
+ <Menu name="file"><text>&amp;File</text>
+  <Action name="file_save_as" group="file_save"/>
+  <Action name="file_print" group="file_print"/>
+ </Menu>
+ <Menu name="view"><text>&amp;View</text>
+  <Action name="view_media"/>
+  <Action name="view_orientation"/>
+  <Separator/>
+  <Action name="view_actual_size"/>
+  <Action name="view_fit_to_page"/>
+  <Action name="view_fit_to_width"/>
+  <Action name="view_fit_to_height"/>
+  <Separator/>
+  <Action name="view_zoom_in"/>
+  <Action name="view_zoom_out"/>
+  <Action name="view_zoom"/>
+  <Separator/>
+  <Action name="view_redisplay"/>
+ </Menu>
+  <Menu name="go_document"><text>&amp;Go</text>
+    <Action name="go_previous"/>
+    <Action name="go_next"/>
+    <Action name="go_goto_page"/>
+    <Separator/>
+    <Action name="go_first"/>
+    <Action name="go_last"/>
+    <Separator/>
+    <Action name="go_read_down"/>
+    <MergeLocal/>
+  </Menu>
+ <Menu name="settings">
+  <Action name="fancy_page_labels"/>
+  <Action name="show_page_list" append="show_merge"/>
+  <Action name="show_preview"/>
+  <Action name="watch_file"/>
+ </Menu>
+</MenuBar>
+<ToolBar name="mainToolBar">
+  <Action name="file_print"/>
+  <Action name="orientation_menu"/>
+  <Action name="media_menu"/>
+  <Action name="view_zoom_in"/>
+  <Action name="view_zoom_out"/>
+  <Action name="go_first"/>
+  <Action name="go_previous"/>
+  <Action name="go_next"/>
+  <Action name="go_last"/>
+  <Action name="readDown"/>
+</ToolBar>
+<StatusBar/>
+</kpartgui>
+

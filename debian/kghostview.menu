@@ -1,0 +1,8 @@
+?package(kghostview):\
+	needs=x11\
+	section=Apps/Viewers\
+	hints="KDE,Documents"\
+	kderemove="y"\
+	title="KGhostview"\
+	command=/usr/bin/kghostview
+

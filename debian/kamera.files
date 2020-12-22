@@ -1,0 +1,9 @@
+usr/share/doc/kde/HTML/en/kamera/*
+usr/lib/kde2/kio_kamera.*
+usr/lib/kde2/libkcm_kamera.*
+usr/share/applnk/Settings/Peripherals/kamera.desktop
+usr/share/icons/hicolor/*/filesystems/camera.png
+usr/share/icons/hicolor/*/actions/camera_test.png
+usr/share/icons/hicolor/*/apps/camera.png
+usr/share/icons/hicolor/*/devices/camera.png
+usr/share/services/kamera.protocol

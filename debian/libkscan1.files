@@ -1,0 +1,3 @@
+usr/share/services/scanservice.desktop
+usr/lib/libkscan.so.*
+usr/lib/libkscan.la

@@ -1,0 +1,8 @@
+?package(kfract):\
+	needs=x11\
+	section=Apps/Math\
+	hints="KDE"\
+	kderemove="y"\
+	title="KFract"\
+	command=/usr/bin/kfract
+

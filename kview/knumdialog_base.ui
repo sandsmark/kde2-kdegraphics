@@ -1,0 +1,124 @@
+<!DOCTYPE UI><UI>
+<class>KNumDialog_Base</class>
+<include location="global">klineedit.h</include>
+<widget>
+    <class>QDialog</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>KNumDialog_Base</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>180</width>
+            <height>90</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>kview</string>
+    </property>
+    <property>
+        <name>layoutMargin</name>
+    </property>
+    <vbox>
+        <property stdset="1">
+            <name>margin</name>
+            <number>6</number>
+        </property>
+        <property stdset="1">
+            <name>spacing</name>
+            <number>6</number>
+        </property>
+        <widget>
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>m_message</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Enter Zoom factor (100 = 1x):</string>
+            </property>
+            <property stdset="1">
+                <name>alignment</name>
+                <set>AlignBottom|AlignLeft</set>
+            </property>
+            <property>
+                <name>vAlign</name>
+            </property>
+        </widget>
+        <widget>
+            <class>KLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>m_edit</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>100</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QLayoutWidget</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Layout6</cstring>
+            </property>
+            <hbox>
+                <property stdset="1">
+                    <name>margin</name>
+                    <number>0</number>
+                </property>
+                <property stdset="1">
+                    <name>spacing</name>
+                    <number>6</number>
+                </property>
+                <widget>
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>m_butOK</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;OK</string>
+                    </property>
+                    <property stdset="1">
+                        <name>default</name>
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>m_butCancel</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Cancel</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+    </vbox>
+</widget>
+<connections>
+    <connection>
+        <sender>m_butOK</sender>
+        <signal>clicked()</signal>
+        <receiver>KNumDialog_Base</receiver>
+        <slot>accept()</slot>
+    </connection>
+    <connection>
+        <sender>m_butCancel</sender>
+        <signal>clicked()</signal>
+        <receiver>KNumDialog_Base</receiver>
+        <slot>reject()</slot>
+    </connection>
+    <slot access="protected">slotDefault()</slot>
+</connections>
+</UI>

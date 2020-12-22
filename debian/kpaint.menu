@@ -1,0 +1,8 @@
+?package(kpaint):\
+	needs=x11\
+	section=Apps/Graphics\
+	hints="KDE"\
+	kderemove="y"\
+	title="KPaint"\
+	command=/usr/bin/kpaint
+

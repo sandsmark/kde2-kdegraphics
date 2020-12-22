@@ -1,0 +1,52 @@
+<!DOCTYPE kpartgui ><kpartgui name="kview" version="5">
+ <MenuBar>
+  <Menu name="file" >
+   <Action name="new_window" />
+   <Action name="close_window" />
+  </Menu>
+  <Menu name="edit" >
+   <Action name="crop" />
+  </Menu>
+  <Menu name="view" >
+   <!--<Action name="zoommenu" />-->
+   <Action name="zoom50" />
+   <Action name="zoom100" />
+   <Action name="zoom200" />
+   <Action name="zoomMaxpect" />
+   <!--<Action name="zoomMax" />
+   <Separator/>
+   <Action name="double_size" />
+   <Action name="half_size" />-->
+   <Separator/>
+   <Action name="fullscreen" />
+  </Menu>
+  <Menu name="go_document" >
+   <Action name="list" />
+   <Action name="slideshow" />
+  </Menu>
+  <Menu name="image" >
+   <text>&amp;Image</text>
+   <Action name="filter" />
+   <Action name="rotate" />
+   <Action name="flip" />
+   <Separator />
+   <Action name="desktop" />
+   <Separator />
+   <Action name="info" />
+  </Menu>
+ </MenuBar>
+ <ToolBar noMerge="1" name="mainToolBar" >
+  <Action name="file_open" />
+  <Action name="file_close" />
+  <Separator />
+  <Action name="go_previous" />
+  <Action name="go_next" />
+  <Separator />
+  <Action name="view_zoom_in" />
+  <Action name="view_zoom_out" />
+  <Separator />
+  <Action name="edit_undo" />
+  <Separator />
+  <Action name="fullscreen" />
+ </ToolBar>
+</kpartgui>

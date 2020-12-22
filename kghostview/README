@@ -1,0 +1,28 @@
+KGHOSTVIEW for KDE 2.0
+
+This is Tim Theisen's Ghostview program ported to the K
+Desktop Environment. Ghostview is used to view PostScript
+documents on Unix X11 systems. It requires Alladin
+Ghostcript to actually perform rendering. KGhostview also
+uses the Qt toolkit.
+
+REQUIREMENTS
+
+1. Alladin ghostscript
+2. KDE 2
+
+If Ghostview works for you then so should KGhostview.
+However, all VMS support has been removed and it has only
+been tested on Linux.
+
+For printer support on SYSV, SVR4 and USG systems go into print setup and set
+the spool command to "lp", the printer name to your desired printer
+( eg. "lp0" ) and the environment variable name to "LPDEST".
+
+
+
+Send bugs via http://bugs.kde.org
+
+Dave <dsweet@kde.org>
+
+

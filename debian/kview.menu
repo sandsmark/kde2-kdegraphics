@@ -1,0 +1,8 @@
+?package(kview):\
+	needs=x11\
+	section=Apps/Viewers\
+	hints="KDE,Images"\
+	kderemove="y"\
+	title="KView"\
+	command=/usr/bin/kview
+

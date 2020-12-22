@@ -1,0 +1,72 @@
+<!DOCTYPE kpartgui>
+<kpartgui name="kpaint" version="3">
+ <MenuBar>
+  <Menu name="file"><text>&amp;File</text>
+    <Action name="file_open_url" append="new_merge"/>
+    <Action name="file_save_url" append="save_merge"/>
+  </Menu>
+  <Menu name="edit"><text>&amp;Edit</text>
+    <Action name="edit_paste_image" append="edit_paste_merge"/>
+  </Menu>
+  <Menu name="tool"><text>&amp;Tools</text>
+    <Action name="tool_config"/>
+    <Separator/>
+    <Action name="tool_0"/>
+    <Action name="tool_1"/>
+    <Action name="tool_2"/>
+    <Action name="tool_3"/>
+    <Action name="tool_4"/>
+    <Action name="tool_5"/>
+    <Action name="tool_6"/>
+    <Action name="tool_7"/>
+    <Action name="tool_8"/>
+    <Action name="tool_9"/>
+    <Action name="tool_10"/>
+    <Action name="tool_11"/>
+    <Action name="tool_12"/>
+    <Action name="tool_13"/>
+    <Action name="tool_14"/>
+    <Action name="tool_15"/>
+    <Action name="tool_16"/>
+    <Action name="tool_17"/>
+    <Action name="tool_18"/>
+    <Action name="tool_19"/>
+    <Action name="tool_20"/>
+  </Menu>
+  <Menu name="image"><text>&amp;Image</text>
+   <Action name="image_info"/>
+   <Action name="image_resize"/>
+   <Action name="image_palette"/>
+   <Action name="image_color"/>
+  </Menu>
+ </MenuBar>
+<ToolBar name="mainToolBar" >
+ <Action name="view_zoom_in" />
+ <Action name="view_zoom_out" />
+</ToolBar>
+<ToolBar name="toolsToolBar" ><text>Tools Toolbar</text>
+    <Action name="tool_config"/>
+    <Separator lineSeparator="true"/>
+    <Action name="tool_0"/>
+    <Action name="tool_1"/>
+    <Action name="tool_2"/>
+    <Action name="tool_3"/>
+    <Action name="tool_4"/>
+    <Action name="tool_5"/>
+    <Action name="tool_6"/>
+    <Action name="tool_7"/>
+    <Action name="tool_8"/>
+    <Action name="tool_9"/>
+    <Action name="tool_10"/>
+    <Action name="tool_11"/>
+    <Action name="tool_12"/>
+    <Action name="tool_13"/>
+    <Action name="tool_14"/>
+    <Action name="tool_15"/>
+    <Action name="tool_16"/>
+    <Action name="tool_17"/>
+    <Action name="tool_18"/>
+    <Action name="tool_19"/>
+    <Action name="tool_20"/>
+</ToolBar>
+</kpartgui>

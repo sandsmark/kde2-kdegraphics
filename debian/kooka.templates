@@ -1,0 +1,41 @@
+Template: kooka/warning
+Type: note
+Description: Kooka could damage your scanner hardware!
+ Kooka and KScan is software in very early state. It is not error free.
+ Kooka may damage your Scanner hardware.
+ .
+ KScan was tested with SANE 1.0.3 and SANE 1.0.4 with the Umax and Mustek 
+ backends. It is not reported to work error-free on even these two !!
+ But it does not damage the scanner ;)
+ .
+ PLEASE BE EXTREMELY CAREFULL if you try to run kooka ! It may shredder your
+ scanner. Be sure to sit next to your scanner having your hand on the power-off
+ switch whenever you start scanning with kooka. Switch off if you hear 
+ unexpectednoises or if something strange happens.
+Description-de: Kooka kann Ihren Scanner beschДdigen!
+ Kooka und KScan sind ist Software in einem frЭhen Stadium. Es ist
+ nicht fehlerfrei und kann daher Ihren Scanner beschДdigen.
+ .
+ KScan wurde mit SANE 1.0.3 und 1.0.4 und Umax und Mustek-Scannern
+ getestet. Es wurde nicht von fehlerfreiem Arbeiten mit diesen zwei
+ Modellen berichtet. Es beschДdigte jedoch keinen Scanner.
+ .
+ BITTE SEIEN SIE EXTREM VORSICHTIG, wenn Sie kooka ausprobieren.
+ Es kann Ihren Scanner zerstЖren. Bitte berЭcksichtigen Sie die
+ MЖglichkeit Ihren Scanner schnell ausschalten zu kЖnnen, wenn Sie
+ kooka verwenden. Schalten Sie den Scanner sofort aus, wenn Sie
+ ungewohnte GerДusche vom Scanner hЖren, oder sonstige Dinge
+ beim scannen passieren
+Description-ru: Kooka может повредить ваше сканирующее оборудование!
+ Kooka и KScan - это ПО в очень раннем состоянии. В них есть ошибки.
+ Kooka может повредить ваше сканирующее оборудование.
+ .
+ KScan тестировался с SANE 1.0.3 и SANE 1.0.4 с оборудованием Umax и
+ Mustek. Но это не означает, что даже для этих двух платформ нет
+ ошибок!! Но они не повреждают сканер ;)
+ .
+ ПОЖАЛУЙСТА, БУДЬТЕ ПРЕДЕЛЬНО ОСТОРОЖНЫ, если вы пытаетесь работать с
+ kooka ! Он может покромсать ваш сканер. Держите вашу руку на
+ выключателе питания сканера при запуске kooka. Если вы услышите
+ непонятные шумы или произойдет еще что-то странное, то немедленно
+ выключите питание.

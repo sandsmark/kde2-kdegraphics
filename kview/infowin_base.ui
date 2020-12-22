@@ -1,0 +1,160 @@
+<!DOCTYPE UI><UI>
+<class>InfoWin_Base</class>
+<widget>
+    <class>QWidget</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>InfoWin_Base</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>234</width>
+            <height>171</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>Image Informations</string>
+    </property>
+    <vbox>
+        <property stdset="1">
+            <name>margin</name>
+            <number>11</number>
+        </property>
+        <property stdset="1">
+            <name>spacing</name>
+            <number>6</number>
+        </property>
+        <widget>
+            <class>QLayoutWidget</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Layout2</cstring>
+            </property>
+            <grid>
+                <property stdset="1">
+                    <name>margin</name>
+                    <number>0</number>
+                </property>
+                <property stdset="1">
+                    <name>spacing</name>
+                    <number>6</number>
+                </property>
+                <widget row="1"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>m_sizetext</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Size:</string>
+                    </property>
+                </widget>
+                <widget row="3"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>m_modifiedtext</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Last Modified:</string>
+                    </property>
+                </widget>
+                <widget row="1"  column="1" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>m_size</cstring>
+                    </property>
+                </widget>
+                <widget row="4"  column="1" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>m_depth</cstring>
+                    </property>
+                </widget>
+                <widget row="2"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>m_writabletext</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Writeable:</string>
+                    </property>
+                </widget>
+                <widget row="3"  column="1" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>m_modified</cstring>
+                    </property>
+                </widget>
+                <widget row="2"  column="1" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>m_writable</cstring>
+                    </property>
+                </widget>
+                <widget row="0"  column="1" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>m_dimensions</cstring>
+                    </property>
+                </widget>
+                <widget row="0"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>m_dimensionstext</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Dimensions:</string>
+                    </property>
+                </widget>
+                <widget row="4"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>m_depthtext</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Color Depth:</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget>
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>PushButton7</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Close</string>
+            </property>
+        </widget>
+    </vbox>
+</widget>
+<connections>
+    <connection>
+        <sender>PushButton7</sender>
+        <signal>clicked()</signal>
+        <receiver>InfoWin_Base</receiver>
+        <slot>slot_close()</slot>
+    </connection>
+    <slot access="protected">slot_close()</slot>
+</connections>
+</UI>

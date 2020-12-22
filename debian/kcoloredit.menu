@@ -1,0 +1,16 @@
+?package(kcoloredit):\
+	needs=x11\
+	section=Apps/Graphics\
+	hints="KDE"\
+	kderemove="y"\
+	title="KColor Edit"\
+	command=/usr/bin/kcoloredit
+
+?package(kcoloredit):\
+	needs=x11\
+	section=Apps/Graphics\
+	hints="KDE"\
+	kderemove="y"\
+	title="KColor Chooser"\
+	command=/usr/bin/kcolorchooser
+

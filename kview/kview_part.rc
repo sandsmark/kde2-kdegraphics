@@ -1,0 +1,22 @@
+<!DOCTYPE kpartgui>
+<kpartgui name="KView" version="2">
+<ActionProperties>
+	<Action name="saveimageas" icon="filesave"/>
+</ActionProperties>
+<MenuBar>
+ <Menu name="edit"><text>&amp;Edit</text>
+  <Action name="saveimageas"/>
+  <Action name="zoomin"/>
+  <Action name="zoomout"/>
+  <Action name="rotate"/>
+  <Action name="reset"/>
+ </Menu>
+</MenuBar>
+<ToolBar name="mainToolBar"><text>Main Toolbar</text>
+  <Action name="saveimageas"/>
+  <Action name="zoomin"/>
+  <Action name="zoomout"/>
+  <Action name="rotate"/>
+  <Action name="reset"/>
+</ToolBar>
+</kpartgui>
