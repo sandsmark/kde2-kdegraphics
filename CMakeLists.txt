@@ -70,6 +70,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 #add_subdirectory(kruler)
 #add_subdirectory(ksnapshot)
 add_subdirectory(kview)
-#add_subdirectory(kviewshell)
+add_subdirectory(kviewshell)
 #add_subdirectory(libkscan)
 
