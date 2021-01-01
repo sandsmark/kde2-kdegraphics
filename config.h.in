@@ -8,3 +8,6 @@
 #cmakedefine HAVE_USLEEP
 #cmakedefine HAVE_SETENV
 #cmakedefine HAVE_UNSETENV
+
+#define VERSION "@CMAKE_PROJECT_VERSION@"
+

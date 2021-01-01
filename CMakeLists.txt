@@ -17,7 +17,7 @@
 
 cmake_minimum_required(VERSION 3.1.0)
 
-project(kdegraphics VERSION 0.3.0 LANGUAGES C CXX)
+project(kdegraphics VERSION 2.2.2 LANGUAGES C CXX)
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 include(kde2_configure)
 
@@ -60,7 +60,7 @@ create_kde2_config_header()
 
 #add_subdirectory(doc)
 #add_subdirectory(kamera)
-#add_subdirectory(kcoloredit)
+add_subdirectory(kcoloredit)
 #add_subdirectory(kdvi)
 #add_subdirectory(kfax)
 #add_subdirectory(kfaxview)
@@ -69,7 +69,7 @@ create_kde2_config_header()
 #add_subdirectory(kiconedit)
 #add_subdirectory(kooka)
 add_subdirectory(kpaint)
-#add_subdirectory(kruler)
+add_subdirectory(kruler)
 #add_subdirectory(ksnapshot)
 add_subdirectory(kview)
 add_subdirectory(kviewshell)

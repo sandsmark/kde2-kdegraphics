@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <iostream.h>
+#include <iostream>
 #include <kconfig.h>
 #include <kwin.h>
 #include <kcursor.h>

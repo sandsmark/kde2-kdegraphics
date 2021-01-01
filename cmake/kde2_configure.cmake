@@ -10,6 +10,8 @@ function(create_kde2_config_header)
     check_function_exists("usleep" HAVE_USLEEP)
     check_function_exists("setenv" HAVE_SETENV)
     check_function_exists("unsetenv" HAVE_UNSETENV)
+    message(STATUS "CMAKE_PROJECT_VERSION = ${CMAKE_PROJECT_VERSION}")
+
 
     configure_file(${PROJECT_SOURCE_DIR}/config.h.in ${PROJECT_BINARY_DIR}/config.h)
     include_directories(${PROJECT_BINARY_DIR})
