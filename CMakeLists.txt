@@ -19,7 +19,7 @@ cmake_minimum_required(VERSION 3.1.0)
 
 project(kdegraphics VERSION 0.3.0 LANGUAGES C CXX)
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-#list(APPEND CMAKE_MODULE_PATH /usr/share/cmake-3.18/Modules/)
+include(kde2_configure)
 
 set(OpenGL_GL_PREFERENCE "LEGACY")
 find_package(JPEG)
@@ -46,15 +46,17 @@ find_package(kdeprint REQUIRED)
 find_package(kjava REQUIRED)
 find_package(khtml REQUIRED)
 find_package(kdefakes REQUIRED)
+
 find_package(kscreensaver REQUIRED)
 
 find_package(ZLIB REQUIRED)
 find_package(Threads REQUIRED)
 find_package(X11 REQUIRED)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/common/)
+add_definitions(-DQT_CLEAN_NAMESPACE -DQT_NO_COMPAT -DQT_NO_ASCII_CAST)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+create_kde2_config_header()
 
 #add_subdirectory(doc)
 #add_subdirectory(kamera)
@@ -66,7 +68,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 #add_subdirectory(kghostview)
 #add_subdirectory(kiconedit)
 #add_subdirectory(kooka)
-#add_subdirectory(kpaint)
+add_subdirectory(kpaint)
 #add_subdirectory(kruler)
 #add_subdirectory(ksnapshot)
 add_subdirectory(kview)
