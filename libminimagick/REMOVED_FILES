@@ -1,0 +1,92 @@
+The image.h and magick.c (GetMagickInfo) files have been modified to remove
+references to removed routines. This mostly applies to the ReadXXX, WriteXXX,
+and IsXXX routines that are not in MiniMagick.
+
+display.c display.h - display util routines.
+
+Make.com (for obvious reasons ;-)
+
+mac.c mac.h - Macintosh routines
+
+vms.c vms.h - VMS routines
+
+nt.c nt.h - NT routines
+
+PreRvIcccm.c PreRvIcccm.h - Not needed.
+
+xwindows.h xwindows.c - X Windows/Xt routines (not needed with high level
+toolkits).
+
+widget.h widget.c - Xlib/Xt widgets 
+
+File I/O:
+8bim.c
+avs.c
+bmp.c
+cmyk.c
+dcm.c
+dps.c
+ept.c
+fax.c
+fits.c
+fpx.c
+gif.c
+gradation.c
+gray.c
+hdf.c
+histogram.c
+html.c
+icc.c
+icon.c
+iptc.c
+jbig.c
+jpeg.c
+label.c
+logo.c
+map.c
+matte.c
+miff.c
+mono.c
+mtv.c
+null.c
+pcd.c
+pcl.c
+pcx.c
+pdf.c
+pict.c
+pix.c
+plasma.c
+png.c
+pnm.c
+preview.c
+ps2.c
+ps3.c
+ps.c
+psd.c
+pwp.c
+rgb.c
+rla.c
+rle.c
+sct.c
+sfw.c
+sgi.c
+stegano.c
+sun.c
+tga.c
+tiff.c
+tile.c
+tim.c
+ttf.c
+txt.c
+uil.c
+uyvy.c
+vicar.c
+vid.c
+viff.c
+wbmp.c
+xbm.c
+x.c
+xc.c
+xpm.c
+xwd.c
+yuv.c

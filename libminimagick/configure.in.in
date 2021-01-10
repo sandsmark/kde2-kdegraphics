@@ -1,0 +1,2 @@
+AC_FUNC_MMAP
+AC_CHECK_HEADERS(pthread.h)

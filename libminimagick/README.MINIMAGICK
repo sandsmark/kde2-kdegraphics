@@ -1,0 +1,26 @@
+MiniMagick is a stripped down version of John Cristy's ImageMagick image
+manipulation and effects library. The API has not changed between this
+and the full version, and apps using MiniMagick should be able to link to
+ImageMagick as well. The only difference is that many misc files have been 
+removed that are not needed when used in conjunction with Unix desktop
+environments. This includes image I/O and non-Unix platform support. This was
+done in order to make the library as small as possible for inclusion in KDE,
+which is required since most distributions don't include recent devel versions
+of ImageMagick and if they do they include it only as a static library which is
+not optimal. Since I was able to significantly cut down on the code needed by
+removing things I didn't need, I decided to make a smaller version of the
+library.
+
+In addition, the CLI tools, "display", bindings, and some documentation are not included
+in kdegraphics for the same reason mentioned above. The CLI tools alone are
+worth using the full ImageMagick version, but for those you can use the 4.x
+series included in your Linux distribution. I highly recommend you install that
+if you ever wished you can do batch operations to images :) 
+
+The ImageMagick homepage is at:
+http://www.wizards.dupont.com/cristy/ImageMagick.html
+
+Daniel M. Duley
+mosfet@kde.org
+mosfet@linuxmandrake.com
+
