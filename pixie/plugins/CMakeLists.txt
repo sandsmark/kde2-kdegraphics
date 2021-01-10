@@ -1,3 +1,3 @@
 add_subdirectory(kde)
-#add_subdirectory(magick)
+add_subdirectory(magick)
 
