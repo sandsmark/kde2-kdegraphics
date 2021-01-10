@@ -1,0 +1,45 @@
+[Desktop Entry]
+Name=ImageForge ImageMagick effects
+Name[ca]=Efectes ImageForge ImageMagick
+Name[cs]=ImageForge efekty (ImageMagick)
+Name[da]=ImageForge KDE effekter
+Name[de]=Bildverfälschungseffekt (ImageMagick)
+Name[eo]=bildforĝilo efektoj de ImageMagick
+Name[es]=Efectos ImageMagick de ImageForge
+Name[et]=ImageForge ImageMagic effektid
+Name[fi]=ImageForge ImageMagic efektit
+Name[fr]=Effet ImageMagick ImageForge
+Name[gl]=Efectos ImageMagick ImageForge
+Name[he]=ImageForge לש ImageMagick יטקפא
+Name[hr]=ImageForge ImageMagick efekti
+Name[hu]=ImageForge ImageMagick effektusok
+Name[is]=ImageForge ImageMagick brellur
+Name[it]=Effeti ImageForge di ImageMagick
+Name[ja]=ImageForge ImageMagick 効果
+Name[ko]=ImageForge ImageMagick 효과
+Name[lt]=ImageForge ImageMagick efektai
+Name[lv]=ImageForge ImageMagick efekti
+Name[mk]=ImageForge ImageMagick ефекти врз сликите
+Name[nl]=ImageForge ImageMagick-effecten
+Name[no]=ImageForge ImageMagick-effekter
+Name[no_NY]=ImageForge-ImageMagick-effektar
+Name[oc]=Efectes ImageForge ImageMagick
+Name[pl]=Efekty ImageForge i ImageMagick
+Name[pt]=Efeitos ImageMagick para o ImageForge
+Name[pt_BR]=Efeitos ImageForge ImageMagick
+Name[ro]=Efecte ImageMagick ImageForge
+Name[ru]=Эффекты ImageMagick от ImageForge
+Name[sk]=ImageMagick Efekty
+Name[sl]=Efekti z ImageForge v ImageMagicku
+Name[sr]=ImageForge ImageMagick efekti
+Name[sv]=ImageForge ImageMagick-effekter
+Name[ta]=ImageForge ImageMagick Å¢¨Ç×¸û
+Name[tr]=ImageForge ImageMagick efektleri
+Name[uk]=Ефекти ImageForge (ImageMagick)
+Name[zh_CN.GB2312]=ImageForge ImageMagick 效果
+Name[zh_TW.Big5]=ImageForge ImageMagick 效果
+X-KDE-Library=libkif_magick
+Effects=Reduce Noise,Noise,Blur,Despeckle,Edge Detect,Emboss,Enhance,Implode,Median Filter,Oil Painting,Roll,Shade,Sharpen,Shear,Spread,Swirl,Wave,Plasma,Equalize,Gamma Correction,Modulate,Normalize,Solarize,Threshold
+
+
+
