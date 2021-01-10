@@ -90,7 +90,7 @@ void KIFPluginMenu::slotActivated(int id)
     else{
         QString libPath = libStr;
         libPath += ".la";
-        libPath = KGlobal::dirs()->findResource("lib", libPath);
+        libPath = KGlobal::dirs()->findResource("module", libPath);
         if(!libPath){
             KMessageBox::error((QWidget *)parent(),
                                i18n("Cannot find plugin for this effect!\nIt is configured as ")

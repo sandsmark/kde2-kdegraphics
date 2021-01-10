@@ -215,7 +215,7 @@ void KIFImageList::slotThumbnails()
             dlregistered = true;
             lt_dlinit();
         }
-        QString libPath = KGlobal::dirs()->findResource("lib",
+        QString libPath = KGlobal::dirs()->findResource("module",
                                                         "libpixie_thumb.la");
         handle = lt_dlopen(libPath.latin1());
         if(!handle){
@@ -253,7 +253,7 @@ void KIFImageList::loadColorPlugin()
             dlregistered = true;
             lt_dlinit();
         }
-        QString libPath = KGlobal::dirs()->findResource("lib",
+        QString libPath = KGlobal::dirs()->findResource("module",
                                                         "libpixie_color.la");
         handle = lt_dlopen(libPath.latin1());
         if(!handle){
