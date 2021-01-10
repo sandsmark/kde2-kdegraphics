@@ -75,5 +75,6 @@ add_subdirectory(ksnapshot)
 add_subdirectory(kview)
 add_subdirectory(kviewshell)
 add_subdirectory(pixie)
+add_subdirectory(libminimagick)
 #add_subdirectory(libkscan)
 

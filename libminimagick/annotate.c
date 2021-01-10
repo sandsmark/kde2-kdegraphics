@@ -197,7 +197,7 @@ Export void AnnotateImage(Image *image,const AnnotateInfo *annotate_info)
     FormatString(label,"%.1024s",textlist[i]);
     FreeMemory(textlist[i]);
     (void) strcpy(local_info->image_info->filename,label);
-    annotate_image=ReadLABELImage(local_info->image_info);
+    annotate_image=NULL;//ReadLABELImage(local_info->image_info);
     if (annotate_image == (Image *) NULL)
       {
         MagickWarning(ResourceLimitWarning,"Unable to annotate image",
@@ -491,7 +491,7 @@ Export void GetAnnotateInfo(const ImageInfo *image_info,
     Get font bounds.
   */
   FormatString(annotate_info->image_info->filename,"%.1024s",Alphabet);
-  annotate_image=ReadLABELImage(annotate_info->image_info);
+  annotate_image=NULL;//ReadLABELImage(annotate_info->image_info);
   if (annotate_image == (Image *) NULL)
     return;
   if (annotate_image->label != (char *) NULL)
