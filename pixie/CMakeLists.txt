@@ -1,3 +1,9 @@
+add_subdirectory(pics)
+add_subdirectory(libifplugin)
+add_subdirectory(plugins)
+add_subdirectory(thumbnails)
+add_subdirectory(color)
+
 qt2_wrap_cpp(pixie_MOC
     SOURCES
         bigwindow.h
