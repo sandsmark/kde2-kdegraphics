@@ -5,25 +5,25 @@ kde2_library(libminimagick
         monitor.c signature.c cache.c delegates.c gems.c montage.c timer.c
         cache_io.c draw.c image.c quantize.c transform.c
     HEADERS
-        mini-magic/animate.h
-        mini-magic/cache.h
-        mini-magic/compress.h
-        mini-magic/error.h
-        mini-magic/magick.h
-        mini-magic/monitor.h
-        mini-magic/utility.h
-        mini-magic/api.h
-        mini-magic/cache_io.h
-        mini-magic/defines.h
-        mini-magic/gems.h
-        mini-magic/memory.h
-        mini-magic/quantize.h
-        mini-magic/version.h
-        mini-magic/blob.h
-        mini-magic/classify.h
-        mini-magic/delegates.h
-        mini-magic/image.h
-        mini-magic/timer.h
+        mini-magick/animate.h
+        mini-magick/cache.h
+        mini-magick/compress.h
+        mini-magick/error.h
+        mini-magick/magick.h
+        mini-magick/monitor.h
+        mini-magick/utility.h
+        mini-magick/api.h
+        mini-magick/cache_io.h
+        mini-magick/defines.h
+        mini-magick/gems.h
+        mini-magick/memory.h
+        mini-magick/quantize.h
+        mini-magick/version.h
+        mini-magick/blob.h
+        mini-magick/classify.h
+        mini-magick/delegates.h
+        mini-magick/image.h
+        mini-magick/timer.h
     LIBS
         m
     )
