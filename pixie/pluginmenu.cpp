@@ -115,11 +115,11 @@ void KIFPluginMenu::slotActivated(int id)
             return;
         }
         currentLoadedStr = libStr;
-        lt_ptr_t effect_func = lt_dlsym(handle, "kifinternal_init");
+        lt_ptr effect_func = lt_dlsym(handle, "kifinternal_init");
         effect_ptr = (void * (*)(QString &, QWidget *, QPixmap *,
                                  QImage *, QRect *, void (*)(),
                                  void (*)(), void (*)())) effect_func;
-        lt_ptr_t proc_func = lt_dlsym(handle, "process");
+        lt_ptr proc_func = lt_dlsym(handle, "process");
         proc_ptr = (void *(*)()) proc_func;
         if(effect_ptr && proc_ptr){
             qWarning("Plugin effect init sucessfully resolved");

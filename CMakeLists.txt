@@ -46,6 +46,7 @@ find_package(kdeprint REQUIRED)
 find_package(kjava REQUIRED)
 find_package(khtml REQUIRED)
 find_package(kdefakes REQUIRED)
+find_package(OpenSSL REQUIRED)
 
 find_package(kscreensaver REQUIRED)
 
@@ -73,5 +74,6 @@ add_subdirectory(kruler)
 add_subdirectory(ksnapshot)
 add_subdirectory(kview)
 add_subdirectory(kviewshell)
+add_subdirectory(pixie)
 #add_subdirectory(libkscan)
 

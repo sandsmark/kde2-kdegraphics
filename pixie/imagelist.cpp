@@ -224,7 +224,7 @@ void KIFImageList::slotThumbnails()
                                i18n("Pixie Plugin Error"));
             return;
         }
-        lt_ptr_t init_func = lt_dlsym(handle, "init");
+        lt_ptr init_func = lt_dlsym(handle, "init");
         init_ptr = (void * (*)(void (*)(const QString &)))init_func;
         if(!init_ptr){
             KMessageBox::error(this,
@@ -262,7 +262,7 @@ void KIFImageList::loadColorPlugin()
                                i18n("Pixie Plugin Error"));
             return;
         }
-        lt_ptr_t init_func = lt_dlsym(handle, "init");
+        lt_ptr init_func = lt_dlsym(handle, "init");
         init_ptr = (void * (*)(QImage* (*)(), void (*)()))init_func;
         if(!init_ptr){
             KMessageBox::error(this,
@@ -272,9 +272,9 @@ void KIFImageList::loadColorPlugin()
         }
         else{
             init_ptr(currentImage, updateImage);
-            lt_ptr_t single_func = lt_dlsym(handle, "runSingleColor");
+            lt_ptr single_func = lt_dlsym(handle, "runSingleColor");
             singleColorDlg = (void *(*)())single_func;
-            lt_ptr_t image_func = lt_dlsym(handle, "runImageColor");
+            lt_ptr image_func = lt_dlsym(handle, "runImageColor");
             imageColorDlg = (void *(*)())image_func;
             if(!singleColorDlg || !imageColorDlg){
                 KMessageBox::error(this,
